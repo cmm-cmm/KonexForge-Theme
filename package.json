@@ -2,7 +2,7 @@
   "name": "konexforge-dark",
   "displayName": "KonexForge Dark",
   "description": "A premium dark VSCode theme with charcoal-slate surfaces and forge-hot orange, amber, and copper accents — striking, high-contrast, distinct from generic One-Dark-style themes.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "konexforge",
   "license": "MIT",
   "engines": {
