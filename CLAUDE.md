@@ -131,7 +131,8 @@ When bumping the theme version: update `version` in `package.json`, add a
 new dated entry at the top of `CHANGELOG.md` (Keep a Changelog format), then
 repackage the `.vsix`. Publishing to the Marketplace (`vsce publish`)
 requires a personal Azure DevOps token tied to the `konexforge` publisher —
-this is a manual, user-driven step, not something to run unprompted.
+this is a manual, user-driven step, not something to run unprompted. See
+`PUBLISHING.md` for the full one-time setup and per-release publish steps.
 
 ## Git
 
