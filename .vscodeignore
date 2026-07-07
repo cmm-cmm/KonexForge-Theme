@@ -1,5 +1,6 @@
 .vscode/**
 .claude/**
+CLAUDE.md
 images/icon.svg
 .gitignore
 *.vsix

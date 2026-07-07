@@ -1,8 +1,33 @@
 # Changelog
 
-All notable changes to the "KonexForge Dark" theme will be documented in this file.
+All notable changes to the "KonexForge Themes" extension will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [0.3.0] - 2026-07-07
+
+### Changed
+
+- Renamed the extension from "KonexForge Dark" to **KonexForge Themes**
+  (package name `konexforge-themes`) to reflect that it now ships a full
+  theme family rather than a single dark theme.
+
+### Added
+
+- **KonexForge Light** theme (`uiTheme: "vs"`) — same orange/amber/copper/
+  rust "hot metal" accent identity as Dark, re-derived for AA contrast
+  against a warm parchment/stone background instead of a generic light gray.
+- **KonexForge Dark High Contrast** theme (`uiTheme: "hc-black"`) —
+  near-black base, brightened accents, `contrastBorder`/
+  `contrastActiveBorder` on focus-relevant widgets, solid (non-alpha)
+  fills throughout per HC accessibility conventions, no italics.
+- **KonexForge Light High Contrast** theme (`uiTheme: "hc-light"`) —
+  near-white base, deepened accents tuned toward AAA contrast, same
+  solid-fill/contrastBorder treatment as the Dark High Contrast variant,
+  no italics.
+- The theme family now shares one hue language across all four variants,
+  so Dark, Light, Dark High Contrast, and Light High Contrast all read as
+  siblings.
 
 ## [0.2.0] - 2026-07-07
 
