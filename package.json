@@ -1,0 +1,48 @@
+{
+  "name": "konexforge-dark",
+  "displayName": "KonexForge Dark",
+  "description": "A premium dark VSCode theme with charcoal-slate surfaces and forge-hot orange, amber, and copper accents — striking, high-contrast, distinct from generic One-Dark-style themes.",
+  "version": "0.1.0",
+  "publisher": "konexforge",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "keywords": [
+    "theme",
+    "color-theme",
+    "dark theme",
+    "forge",
+    "orange",
+    "amber",
+    "copper",
+    "high contrast",
+    "vivid",
+    "charcoal"
+  ],
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#14171C",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/konexforge/konexforge-dark-theme.git"
+  },
+  "bugs": {
+    "url": "https://github.com/konexforge/konexforge-dark-theme/issues"
+  },
+  "homepage": "https://github.com/konexforge/konexforge-dark-theme#readme",
+  "contributes": {
+    "themes": [
+      {
+        "label": "KonexForge Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/konexforge-dark-color-theme.json"
+      }
+    ]
+  }
+}

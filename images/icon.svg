@@ -1,0 +1,24 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="forgeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFB067"/>
+      <stop offset="50%" stop-color="#FF7A33"/>
+      <stop offset="100%" stop-color="#C1440E"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="128" height="128" rx="24" fill="#14171C"/>
+  <rect x="4" y="4" width="120" height="120" rx="20" fill="#1A1E24"/>
+
+  <!-- anvil silhouette -->
+  <path d="M28 82 H100 V92 H28 Z" fill="url(#forgeGradient)"/>
+  <path d="M40 62 H88 L100 78 H28 Z" fill="url(#forgeGradient)"/>
+  <rect x="58" y="38" width="12" height="26" rx="2" fill="url(#forgeGradient)"/>
+  <rect x="46" y="92" width="8" height="10" fill="#3A404B"/>
+  <rect x="74" y="92" width="8" height="10" fill="#3A404B"/>
+
+  <!-- spark accents -->
+  <circle cx="90" cy="30" r="3.5" fill="#F5A623"/>
+  <circle cx="99" cy="42" r="2.2" fill="#FFB067"/>
+  <circle cx="82" cy="22" r="2" fill="#FFB067"/>
+</svg>

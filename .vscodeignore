@@ -1,0 +1,5 @@
+.vscode/**
+.claude/**
+images/icon.svg
+.gitignore
+*.vsix
