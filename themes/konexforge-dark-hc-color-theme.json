@@ -56,6 +56,7 @@
 
     "editorStickyScroll.background": "#000000",
     "editorStickyScroll.border": "#FFB067",
+    "editorStickyScroll.shadow": "#FFB067",
     "editorStickyScrollHover.background": "#241A00",
 
     "editor.selectionHighlightBorder": "#FF8A4D",

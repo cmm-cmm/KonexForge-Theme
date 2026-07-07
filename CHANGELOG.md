@@ -4,6 +4,21 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.3.1] - 2026-07-07
+
+### Added
+
+- `editorStickyScroll.shadow` to both High Contrast variants (solid
+  `contrastBorder` color, no alpha) — the one key Dark/Light had that the
+  HC files were missing, restoring key parity across the family.
+- A structural validator (`scripts/validate-themes.js`) and a GitHub
+  Actions workflow that runs it on every push and pull request. It
+  enforces key parity across the 4 variants, the italic allowlist in
+  Dark/Light, the no-italics/no-alpha rules in both High Contrast
+  variants, the bracket color sequence, and valid hex values. Repo
+  infrastructure only — no visual change beyond the sticky-scroll shadow
+  above.
+
 ## [0.3.0] - 2026-07-07
 
 ### Changed
