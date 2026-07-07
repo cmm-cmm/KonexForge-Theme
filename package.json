@@ -1,8 +1,8 @@
 {
-  "name": "konexforge-dark",
-  "displayName": "KonexForge Dark",
-  "description": "A premium dark VSCode theme with charcoal-slate surfaces and forge-hot orange, amber, and copper accents — striking, high-contrast, distinct from generic One-Dark-style themes.",
-  "version": "0.2.0",
+  "name": "konexforge-themes",
+  "displayName": "KonexForge Themes",
+  "description": "A family of 4 VSCode color themes — Dark, Light, Dark High Contrast, and Light High Contrast — sharing one 'forge' hue language: charcoal-slate or warm-parchment surfaces with hot orange, amber, and copper accents. Striking and distinct from generic One-Dark-style themes.",
+  "version": "0.3.0",
   "publisher": "konexforge",
   "license": "MIT",
   "engines": {
@@ -15,11 +15,15 @@
     "theme",
     "color-theme",
     "dark theme",
+    "light theme",
+    "high contrast",
+    "accessibility",
+    "hc-black",
+    "hc-light",
     "forge",
     "orange",
     "amber",
     "copper",
-    "high contrast",
     "vivid",
     "charcoal"
   ],
@@ -30,18 +34,33 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/konexforge/konexforge-dark-theme.git"
+    "url": "https://github.com/cmm-cmm/KonexForge-Theme.git"
   },
   "bugs": {
-    "url": "https://github.com/konexforge/konexforge-dark-theme/issues"
+    "url": "https://github.com/cmm-cmm/KonexForge-Theme/issues"
   },
-  "homepage": "https://github.com/konexforge/konexforge-dark-theme#readme",
+  "homepage": "https://github.com/cmm-cmm/KonexForge-Theme#readme",
   "contributes": {
     "themes": [
       {
         "label": "KonexForge Dark",
         "uiTheme": "vs-dark",
         "path": "./themes/konexforge-dark-color-theme.json"
+      },
+      {
+        "label": "KonexForge Light",
+        "uiTheme": "vs",
+        "path": "./themes/konexforge-light-color-theme.json"
+      },
+      {
+        "label": "KonexForge Dark High Contrast",
+        "uiTheme": "hc-black",
+        "path": "./themes/konexforge-dark-hc-color-theme.json"
+      },
+      {
+        "label": "KonexForge Light High Contrast",
+        "uiTheme": "hc-light",
+        "path": "./themes/konexforge-light-hc-color-theme.json"
       }
     ]
   }
