@@ -99,9 +99,21 @@ hexes, don't invent new ones for the same role):
 | Secondary accent (amber) | `#F5A623` |
 | Tertiary accent (copper) | `#C97B4A` |
 | Error (ember red) | `#E5484D` |
-| Info/constants (steel blue) | `#5FA8D3` |
-| Types/classes (slate teal) | `#45B8AC` |
-| Decorators/regex (violet) | `#9D7CD8` |
+| Info/constants (steel blue) | `#47A8E1` |
+| Types/classes (slate teal) | `#26C5B5` |
+| Decorators/regex (violet) | `#8F61E5` |
+| Success/added (green) | `#4BD26D` |
+
+Steel blue, slate teal, violet, and green are deliberately saturated to
+read as vividly as the orange/amber heroes (not washed-out pastels) —
+when re-deriving a variant's hex for one of these roles, boost saturation
+to match, don't just lighten/darken the existing value.
+
+`terminal.ansiCyan`/`ansiBrightCyan` and `terminal.ansiMagenta`/
+`ansiBrightMagenta` are **standalone true hues** (cyan ~188°, magenta
+~310°) — they do not reuse the slate-teal or violet hex. Every other ANSI
+slot maps 1:1 onto an existing role color (e.g. `ansiBlue` = the steel
+blue accent, `ansiGreen` = the success/added green).
 
 Deliberate style choice: **in Dark and Light**, italics mark the
 "annotation layer" of code — things that describe or qualify other code
