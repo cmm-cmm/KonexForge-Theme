@@ -23,10 +23,17 @@ There is no build step and no `main` entry point.
 There is no npm/build toolchain in this repo — all commands below are run
 via `npx` (no local `node_modules`, no `package-lock.json`).
 
-- **Validate JSON** (do this after any edit to `package.json` or a theme file):
+- **Validate the themes** (do this after any edit to `package.json` or a
+  theme file — CI runs the same script on every push/PR):
   ```
-  node -e "['package.json','themes/konexforge-dark-color-theme.json','themes/konexforge-light-color-theme.json','themes/konexforge-dark-hc-color-theme.json','themes/konexforge-light-hc-color-theme.json'].forEach(f=>{JSON.parse(require('fs').readFileSync(f,'utf8'));console.log(f,'OK')})"
+  node scripts/validate-themes.js
   ```
+  Beyond JSON parsing it enforces the structural rules described below:
+  key parity across the 4 files (with the documented HC-only allowlist),
+  identical `tokenColors`/`semanticTokenColors` structure, the italic
+  allowlist in Dark/Light, no italics and no alpha channels in HC, the
+  bracket color sequence, valid hex everywhere, and that the theme paths
+  in `package.json` exist.
 - **Package into a .vsix**:
   ```
   npx --yes @vscode/vsce package --no-git-tag-version --no-update-package-json
@@ -92,17 +99,41 @@ hexes, don't invent new ones for the same role):
 | Secondary accent (amber) | `#F5A623` |
 | Tertiary accent (copper) | `#C97B4A` |
 | Error (ember red) | `#E5484D` |
-| Info/constants (steel blue) | `#5FA8D3` |
-| Types/classes (slate teal) | `#45B8AC` |
-| Decorators/regex (violet) | `#9D7CD8` |
+| Info/constants (steel blue) | `#47A8E1` |
+| Types/classes (slate teal) | `#26C5B5` |
+| Decorators/regex (violet) | `#8F61E5` |
+| Success/added (green) | `#4BD26D` |
 
-Deliberate style choice: only `comment` and `keyword`/`control-flow` scopes
-are italic **in Dark and Light**. Storage, functions, types, and variables
-stay upright so code remains fast to scan — don't add italics elsewhere
-without a specific reason. **Both High Contrast variants drop italics
-entirely** (accessibility: italicized glyphs reduce clarity for low-vision
-users) — keep the same color distinctions, just set `fontStyle` to normal/
-unset wherever Dark/Light use italic.
+Steel blue, slate teal, violet, and green are deliberately saturated to
+read as vividly as the orange/amber heroes (not washed-out pastels) —
+when re-deriving a variant's hex for one of these roles, boost saturation
+to match, don't just lighten/darken the existing value.
+
+`terminal.ansiCyan`/`ansiBrightCyan` and `terminal.ansiMagenta`/
+`ansiBrightMagenta` are **standalone true hues** (cyan ~188°, magenta
+~310°) — they do not reuse the slate-teal or violet hex. Every other ANSI
+slot maps 1:1 onto an existing role color (e.g. `ansiBlue` = the steel
+blue accent, `ansiGreen` = the success/added green).
+
+Deliberate style choice: **in Dark and Light**, italics mark the
+"annotation layer" of code — things that describe or qualify other code
+rather than being the code itself. The exact italic set (identical in both
+files; the validate script enforces it):
+
+- `tokenColors` scopes: `comment`/`comment.line`/`comment.block`,
+  `comment.block.documentation`, `keyword`/`keyword.control`,
+  `entity.other.inherited-class`, `entity.other.attribute-name`,
+  `variable.parameter`, `meta.decorator`/`punctuation.decorator`, and
+  `markup.italic` (semantic — it renders Markdown emphasis).
+- `semanticTokenColors`: `keyword`, `parameter`, `namespace`, `decorator`,
+  `macro`, `*.defaultLibrary`.
+
+Storage, functions, types, strings, and plain variables stay upright so
+code remains fast to scan — don't add italics beyond this set without a
+specific reason. **Both High Contrast variants drop italics entirely**
+(accessibility: italicized glyphs reduce clarity for low-vision users) —
+keep the same color distinctions, just set `fontStyle` to normal/unset
+wherever Dark/Light use italic.
 
 ### Light and High Contrast variants
 
@@ -119,6 +150,13 @@ unset wherever Dark/Light use italic.
   bracket-pair-guide backgrounds, diff fills) becomes a **solid
   pre-blended hex** in both HC files — no translucency, per HC accessibility
   convention that low-vision users need firm boundaries, not subtle tints.
+- Deliberate exception to the structure-mirror rule: exactly 7 `colors`
+  keys exist **only** in the two HC files, because HC boundaries come from
+  borders that Dark/Light intentionally leave unset — `contrastBorder`,
+  `contrastActiveBorder`, `list.focusOutline`, `button.border`,
+  `notifications.border`, `menu.border`, `menu.selectionBorder`. Don't add
+  these to Dark/Light, and don't grow this list without updating both this
+  doc and the allowlist in `scripts/validate-themes.js`.
 
 Bracket pair colorization (`editorBracketHighlight.foreground1-6` /
 `editorBracketPairGuide.*`) cycles through

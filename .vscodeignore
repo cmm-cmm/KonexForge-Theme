@@ -1,5 +1,7 @@
 .vscode/**
 .claude/**
+.github/**
+scripts/**
 CLAUDE.md
 PUBLISHING.md
 images/icon.svg

@@ -4,6 +4,40 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.4.0] - 2026-07-16
+
+### Changed
+
+- Boosted the saturation of the cool counterpoint accents — steel blue,
+  slate teal, violet — and the green used for git/diff/`ansiGreen`,
+  across all 4 variants. They previously sat well below the
+  saturation of the orange/amber "hero" accents (e.g. Dark's steel blue
+  was 57% saturated vs. amber's 91%), so they read as washed out even
+  though the hues were already present. Re-derived per variant, keeping
+  each file's own hue and re-verified against its background for
+  contrast at or above what the existing accents already achieved.
+- `terminal.ansiCyan`/`ansiBrightCyan` and `terminal.ansiMagenta`/
+  `ansiBrightMagenta` are now standalone true cyan (~188°) and magenta
+  (~310°) hues instead of reusing the slate-teal/violet hex verbatim —
+  the previous values weren't actually cyan or magenta by hue (closer to
+  174°/261°), so terminal color output for those two ANSI slots looked
+  like duller repeats of the class/decorator syntax colors.
+
+## [0.3.1] - 2026-07-07
+
+### Added
+
+- `editorStickyScroll.shadow` to both High Contrast variants (solid
+  `contrastBorder` color, no alpha) — the one key Dark/Light had that the
+  HC files were missing, restoring key parity across the family.
+- A structural validator (`scripts/validate-themes.js`) and a GitHub
+  Actions workflow that runs it on every push and pull request. It
+  enforces key parity across the 4 variants, the italic allowlist in
+  Dark/Light, the no-italics/no-alpha rules in both High Contrast
+  variants, the bracket color sequence, and valid hex values. Repo
+  infrastructure only — no visual change beyond the sticky-scroll shadow
+  above.
+
 ## [0.3.0] - 2026-07-07
 
 ### Changed
