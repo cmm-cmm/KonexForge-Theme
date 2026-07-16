@@ -2,7 +2,7 @@
   "name": "konexforge-themes",
   "displayName": "KonexForge Themes",
   "description": "A family of 4 VSCode color themes — Dark, Light, Dark High Contrast, and Light High Contrast — sharing one 'forge' hue language: charcoal-slate or warm-parchment surfaces with hot orange, amber, and copper accents. Striking and distinct from generic One-Dark-style themes.",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "publisher": "konexforge",
   "license": "MIT",
   "engines": {

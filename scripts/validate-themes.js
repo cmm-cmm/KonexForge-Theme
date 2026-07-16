@@ -57,7 +57,7 @@ const ITALIC_SEMANTIC_TOKENS = new Set([
   '*.defaultLibrary',
 ]);
 
-const BRACKET_SEQUENCE = ['#FF7A33', '#F5A623', '#5FA8D3', '#45B8AC', '#9D7CD8', '#C97B4A'];
+const BRACKET_SEQUENCE = ['#FF7A33', '#F5A623', '#47A8E1', '#26C5B5', '#8F61E5', '#C97B4A'];
 
 const HEX_RE = /^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
 
