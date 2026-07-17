@@ -4,6 +4,23 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.0] - 2026-07-17
+
+### Added
+
+- Dedicated coloring for markup/template files (HTML, JSX, Blade, Vue,
+  etc.): attribute/prop names (`entity.other.attribute-name`, e.g. `class`
+  in `<div class="...">`) now use the steel blue accent instead of amber,
+  and attribute-*value* strings specifically (`string.quoted.double.html`/
+  `string.quoted.single.html`) use the slate teal accent instead of the
+  generic warm string color. Previously a typical markup line (tag,
+  attribute name, attribute value, plus any embedded `{{ ... }}`
+  expression) rendered almost entirely in orange/amber, making it hard to
+  tell those parts apart. Regular code strings (JS/PHP/Python literals,
+  including inside embedded template expressions) are unaffected — this
+  only targets the narrower HTML attribute-value string scope, which wins
+  over the generic `string` rule by TextMate specificity.
+
 ## [0.4.0] - 2026-07-16
 
 ### Changed

@@ -109,6 +109,24 @@ read as vividly as the orange/amber heroes (not washed-out pastels) —
 when re-deriving a variant's hex for one of these roles, boost saturation
 to match, don't just lighten/darken the existing value.
 
+**Markup/template files (HTML, JSX, Blade, Vue, etc.)** get their own
+break from the orange/amber family, since a typical line there (a tag,
+an attribute name, an attribute-value string) would otherwise be almost
+entirely warm-hued with nothing to tell the parts apart:
+`entity.other.attribute-name` (attribute/prop names, e.g. `class` in
+`<div class="...">`) uses the **info/constants steel blue** accent
+instead of amber, and `string.quoted.double.html`/`string.quoted.single.html`
+(attribute-*value* strings specifically) use the **types/classes slate
+teal** accent instead of the generic warm string color — this is a
+narrower TextMate scope than the generic `string`/`string.quoted` rule
+above, so it wins by specificity without touching how regular code
+strings (JS/PHP/Python literals, including ones inside embedded
+`{{ ... }}` expressions in Blade) are colored. Net effect: `<div
+class="row">` reads as orange (tag) → steel blue (attribute name) → slate
+teal (attribute value), and an embedded `{{ __('key') }}` expression
+still reads in the standard amber "code" colors, so it visually stands
+out as code against the now cooler-toned surrounding markup.
+
 `terminal.ansiCyan`/`ansiBrightCyan` and `terminal.ansiMagenta`/
 `ansiBrightMagenta` are **standalone true hues** (cyan ~188°, magenta
 ~310°) — they do not reuse the slate-teal or violet hex. Every other ANSI

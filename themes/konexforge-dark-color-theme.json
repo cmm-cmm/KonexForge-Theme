@@ -303,7 +303,11 @@
     },
     {
       "scope": "entity.other.attribute-name",
-      "settings": { "foreground": "#F5A623", "fontStyle": "italic" }
+      "settings": { "foreground": "#47A8E1", "fontStyle": "italic" }
+    },
+    {
+      "scope": ["string.quoted.double.html", "string.quoted.single.html"],
+      "settings": { "foreground": "#26C5B5" }
     },
     {
       "scope": "variable",

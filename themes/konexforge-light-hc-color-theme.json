@@ -311,7 +311,11 @@
     },
     {
       "scope": "entity.other.attribute-name",
-      "settings": { "foreground": "#6E4800" }
+      "settings": { "foreground": "#0A5E85" }
+    },
+    {
+      "scope": ["string.quoted.double.html", "string.quoted.single.html"],
+      "settings": { "foreground": "#0A5241" }
     },
     {
       "scope": "variable",
