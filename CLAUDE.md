@@ -133,6 +133,31 @@ Python f-string placeholders join the violet template-`${}` rule.
 `storage.type.function.arrow` (the JS/TS `=>`) is demoted to operator
 gray — arrow functions are too frequent in modern JS for rust-orange.
 
+Auxiliary-format rules (same role logic): **YAML mapping keys**
+(`entity.name.tag.yaml`) are steel blue, overriding the orange
+`entity.name.tag` — a config file full of keys must not become an
+orange wall. Diff/patch content maps to the git colors
+(`markup.inserted` green, `markup.deleted` red, `markup.changed`
+amber, `meta.diff.header` steel blue, `meta.diff.range` violet).
+Shell `$VAR` / Ruby `@var` are steel blue; `entity.name.command.shell`
+is amber like other callables. Regex internals (char classes,
+quantifiers) stay in the violet family with the rest of the regex.
+SQL table/database names are teal; `constant.other.enum` is steel
+blue. Markdown: `markup.quote` is comment-muted,
+`punctuation.definition.heading` matches the orange heading, and
+`markup.strikethrough` gets `fontStyle: strikethrough` (no color).
+
+The `colors` section also covers the full workbench surface beyond the
+basics: error/warning/info squiggles and problem icons, `textLink.*`,
+inlay hints, CodeLens/ghost text, `symbolIcon.*` (mapped to the token
+roles: classes teal, functions amber, constants/properties steel blue,
+keywords orange, strings green), debug (icons, stack-frame highlights,
+`debugTokenExpression.*`), `testing.icon*`, `charts.*`,
+`inputValidation.*` (solid pre-blended backgrounds in every variant),
+keybinding labels, merge headers, minimap error/warning, and marker
+navigation. All of these reuse the role hexes above — when adding a
+new UI key, pick the role color, don't invent a new hex.
+
 **Markup/template files (HTML, JSX, Blade, Vue, etc.)** get their own
 break from the orange/amber family, since a typical line there (a tag,
 an attribute name, an attribute-value string) would otherwise be almost

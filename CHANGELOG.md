@@ -4,6 +4,32 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.8.0] - 2026-07-18
+
+### Added
+
+- Full workbench UI coverage (+104 `colors` keys per variant, identical
+  key set across all 4): error/warning/info squiggles and problem
+  icons, `textLink.*`/`editorLink.*`, inlay hints, CodeLens and ghost
+  text, `symbolIcon.*` mapped to the token roles, debug (icons,
+  stack-frame highlights, `debugTokenExpression.*`), `testing.icon*`,
+  `charts.*`, `inputValidation.*`, keybinding labels, banner, text
+  block/code-block styling, merge conflict headers, minimap
+  error/warning/find-match, marker navigation, and assorted
+  high-visibility keys. All values reuse each variant's existing role
+  hexes; every translucent value is pre-blended to a solid hex in the
+  two High Contrast variants.
+- Syntax rules for auxiliary formats: YAML mapping keys → steel blue
+  (they previously drowned in the same orange as HTML tags);
+  diff/patch files → green inserted / red deleted / amber changed with
+  steel-blue headers and violet hunk ranges (previously entirely
+  unstyled); shell `$VAR` and Ruby `@var` → steel blue;
+  `entity.name.command.shell` → amber; SQL table/database names →
+  teal; `constant.other.enum` → steel blue; regex character classes
+  and quantifiers → violet (unifying the regex family); Markdown
+  blockquotes → comment gray, heading `#` markers → heading orange,
+  and `~~strikethrough~~` now actually renders struck through.
+
 ## [0.7.0] - 2026-07-18
 
 ### Added
