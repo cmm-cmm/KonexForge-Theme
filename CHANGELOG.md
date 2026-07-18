@@ -4,6 +4,36 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.7.0] - 2026-07-18
+
+### Added
+
+- Language-coverage pass for JS/TS/JSX/TSX, C/C++, PHP, Python, and C#
+  (all 4 variants), fixing scopes those grammars emit that previously
+  fell through to generic rules:
+  - `variable.language` (`this`, `self`, `super`, `$this`) — copper
+    bold, previously indistinguishable from plain variables. Includes
+    Pylance's `selfParameter`/`clsParameter` semantic tokens.
+  - Word-like operators (`new`, `typeof`/`keyof`/`instanceof`,
+    `sizeof`, casts, Python `and`/`or`/`not`) — keyword orange/italic,
+    previously gray like punctuation.
+  - Built-in primitive types (`storage.type.built-in` for C/C++,
+    `keyword.type` for C#) — slate teal; C#'s `int`/`string`/`bool`
+    previously rendered italic-orange like keywords.
+  - `support.constant`/`support.variable` (`console`, `window`,
+    `Math.PI`, CSS property values) and semantic `builtinConstant` —
+    steel blue, previously unstyled.
+  - Python decorators (`entity.name.function.decorator` +
+    `punctuation.definition.decorator`) — violet, previously amber/gray.
+  - C# `$"{x}"` interpolation braces and Python f-string placeholders —
+    violet, joining the template-`${}` rule.
+
+### Changed
+
+- JS/TS arrow `=>` (`storage.type.function.arrow`) demoted from rust
+  orange to operator gray — too frequent in modern JS to sit in the
+  warm family.
+
 ## [0.6.0] - 2026-07-18
 
 ### Changed

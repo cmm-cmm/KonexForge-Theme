@@ -41,11 +41,18 @@ const ITALIC_TOKEN_SCOPES = new Set([
   'comment.block.documentation',
   'keyword',
   'keyword.control',
+  'keyword.operator.new',
+  'keyword.operator.expression',
+  'keyword.operator.logical.python',
+  'keyword.operator.sizeof',
+  'keyword.operator.cast',
   'entity.other.inherited-class',
   'entity.other.attribute-name',
   'variable.parameter',
   'meta.decorator',
   'punctuation.decorator',
+  'entity.name.function.decorator',
+  'punctuation.definition.decorator',
   'markup.italic',
 ]);
 const ITALIC_SEMANTIC_TOKENS = new Set([

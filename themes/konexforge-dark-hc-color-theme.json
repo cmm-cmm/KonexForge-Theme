@@ -266,7 +266,7 @@
       "settings": { "foreground": "#89E69D" }
     },
     {
-      "scope": "punctuation.definition.template-expression",
+      "scope": ["punctuation.definition.template-expression", "punctuation.definition.interpolation", "constant.character.format.placeholder"],
       "settings": { "foreground": "#C29CF6" }
     },
     {
@@ -290,6 +290,10 @@
       "settings": { "foreground": "#D6D0C0" }
     },
     {
+      "scope": ["keyword.operator.new", "keyword.operator.expression", "keyword.operator.logical.python", "keyword.operator.sizeof", "keyword.operator.cast"],
+      "settings": { "foreground": "#FF8A4D" }
+    },
+    {
       "scope": ["storage", "storage.type"],
       "settings": { "foreground": "#FF6A2E" }
     },
@@ -298,11 +302,19 @@
       "settings": { "foreground": "#FF6A2E", "fontStyle": "bold" }
     },
     {
+      "scope": "storage.type.function.arrow",
+      "settings": { "foreground": "#D6D0C0" }
+    },
+    {
       "scope": ["entity.name.function", "support.function"],
       "settings": { "foreground": "#FFB84D" }
     },
     {
       "scope": ["entity.name.class", "entity.name.type", "support.class"],
+      "settings": { "foreground": "#5BE6D6" }
+    },
+    {
+      "scope": ["storage.type.built-in", "keyword.type"],
       "settings": { "foreground": "#5BE6D6" }
     },
     {
@@ -330,6 +342,10 @@
       "settings": { "foreground": "#D6D0C0" }
     },
     {
+      "scope": "variable.language",
+      "settings": { "foreground": "#E08F5C", "fontStyle": "bold" }
+    },
+    {
       "scope": ["variable.other.constant", "variable.other.readonly"],
       "settings": { "foreground": "#7DC5F2", "fontStyle": "bold" }
     },
@@ -338,7 +354,11 @@
       "settings": { "foreground": "#7DC5F2" }
     },
     {
-      "scope": ["meta.decorator", "punctuation.decorator"],
+      "scope": ["support.constant", "support.variable"],
+      "settings": { "foreground": "#7DC5F2" }
+    },
+    {
+      "scope": ["meta.decorator", "punctuation.decorator", "entity.name.function.decorator", "punctuation.definition.decorator"],
       "settings": { "foreground": "#C29CF6" }
     },
     {
@@ -402,6 +422,9 @@
     "string": "#89E69D",
     "operator": "#D6D0C0",
     "regexp": "#C29CF6",
+    "selfParameter": { "foreground": "#E08F5C", "fontStyle": "bold" },
+    "clsParameter": { "foreground": "#E08F5C", "fontStyle": "bold" },
+    "builtinConstant": "#7DC5F2",
     "*.defaultLibrary": "#7DC5F2",
     "*.static": { "fontStyle": "bold" },
     "*.deprecated": { "fontStyle": "strikethrough" }

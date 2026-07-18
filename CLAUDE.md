@@ -116,6 +116,23 @@ read as vividly as the orange/amber heroes (not washed-out pastels) —
 when re-deriving a variant's hex for one of these roles, boost saturation
 to match, don't just lighten/darken the existing value.
 
+Language-coverage rules (tuned for JS/TS/JSX/TSX, C/C++, PHP, Python,
+C#, and validated by simulating TextMate prefix matching):
+`variable.language` (`this`, `self`, `super`, `$this`) is **copper
+bold** — copper's dedicated token role now that constants moved to
+steel blue; the Pylance semantic tokens `selfParameter`/`clsParameter`
+match it. Built-in primitive types (`storage.type.built-in` for C/C++,
+`keyword.type` for C#) are slate teal like all other types — without
+this rule C#'s `int`/`string` would inherit the italic-orange keyword
+style. `support.constant`/`support.variable` (built-in objects and
+constants: `console`, `window`, `Math.PI`, CSS property values) and the
+semantic `builtinConstant` are steel blue. Python decorators
+(`entity.name.function.decorator` + `punctuation.definition.decorator`)
+join the violet decorator set, and C# `$"{x}"` interpolation braces +
+Python f-string placeholders join the violet template-`${}` rule.
+`storage.type.function.arrow` (the JS/TS `=>`) is demoted to operator
+gray — arrow functions are too frequent in modern JS for rust-orange.
+
 **Markup/template files (HTML, JSX, Blade, Vue, etc.)** get their own
 break from the orange/amber family, since a typical line there (a tag,
 an attribute name, an attribute-value string) would otherwise be almost
@@ -146,10 +163,14 @@ rather than being the code itself. The exact italic set (identical in both
 files; the validate script enforces it):
 
 - `tokenColors` scopes: `comment`/`comment.line`/`comment.block`,
-  `comment.block.documentation`, `keyword`/`keyword.control`,
-  `entity.other.inherited-class`, `entity.other.attribute-name`,
-  `variable.parameter`, `meta.decorator`/`punctuation.decorator`, and
-  `markup.italic` (semantic — it renders Markdown emphasis).
+  `comment.block.documentation`, `keyword`/`keyword.control`, the
+  word-like operators (`keyword.operator.new`/`.expression`/
+  `.logical.python`/`.sizeof`/`.cast` — they read as keywords, not
+  punctuation), `entity.other.inherited-class`,
+  `entity.other.attribute-name`, `variable.parameter`,
+  `meta.decorator`/`punctuation.decorator`/
+  `entity.name.function.decorator`/`punctuation.definition.decorator`,
+  and `markup.italic` (semantic — it renders Markdown emphasis).
 - `semanticTokenColors`: `keyword`, `parameter`, `namespace`, `decorator`,
   `macro`, `*.defaultLibrary`.
 
