@@ -259,23 +259,27 @@
     },
     {
       "scope": ["string", "string.quoted"],
-      "settings": { "foreground": "#7A4A14" }
+      "settings": { "foreground": "#1B6A30" }
     },
     {
-      "scope": ["string.template", "punctuation.definition.template-expression"],
-      "settings": { "foreground": "#7A3E14" }
+      "scope": "string.template",
+      "settings": { "foreground": "#1B6A30" }
+    },
+    {
+      "scope": "punctuation.definition.template-expression",
+      "settings": { "foreground": "#5224A8" }
     },
     {
       "scope": "constant.numeric",
-      "settings": { "foreground": "#8C5A22" }
+      "settings": { "foreground": "#0A5E85" }
     },
     {
       "scope": "constant.language",
-      "settings": { "foreground": "#7A3E14", "fontStyle": "bold" }
+      "settings": { "foreground": "#0A5E85", "fontStyle": "bold" }
     },
     {
       "scope": "constant.character.escape",
-      "settings": { "foreground": "#8F3400" }
+      "settings": { "foreground": "#5224A8" }
     },
     {
       "scope": ["keyword", "keyword.control"],
@@ -327,7 +331,7 @@
     },
     {
       "scope": ["variable.other.constant", "variable.other.readonly"],
-      "settings": { "foreground": "#7A3E14", "fontStyle": "bold" }
+      "settings": { "foreground": "#0A5E85", "fontStyle": "bold" }
     },
     {
       "scope": "support.type.property-name",
@@ -386,16 +390,16 @@
     "event": "#5224A8",
     "variable": "#16150F",
     "parameter": "#433F31",
-    "variable.readonly": { "foreground": "#7A3E14", "fontStyle": "bold" },
+    "variable.readonly": { "foreground": "#0A5E85", "fontStyle": "bold" },
     "property": "#0A5E85",
-    "enumMember": "#7A3E14",
+    "enumMember": "#0A5E85",
     "namespace": "#5224A8",
     "decorator": "#5224A8",
     "macro": "#8F3400",
     "label": "#7A3E14",
     "keyword": "#8F3400",
-    "number": "#8C5A22",
-    "string": "#7A4A14",
+    "number": "#0A5E85",
+    "string": "#1B6A30",
     "operator": "#433F31",
     "regexp": "#5224A8",
     "*.defaultLibrary": "#0A5E85",

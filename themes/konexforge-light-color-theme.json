@@ -23,7 +23,7 @@
     "editorWhitespace.foreground": "#DCD0B4",
     "editorRuler.foreground": "#DCD0B4",
     "editorGutter.background": "#FAF6ED",
-    "editorGutter.addedBackground": "#228740",
+    "editorGutter.addedBackground": "#1C7838",
     "editorGutter.modifiedBackground": "#946200",
     "editorGutter.deletedBackground": "#B8342E",
     "editorGutter.foldingControlForeground": "#6E6752",
@@ -64,7 +64,7 @@
     "editorOverviewRuler.warningForeground": "#946200",
     "editorOverviewRuler.infoForeground": "#176EA1",
     "editorOverviewRuler.modifiedForeground": "#946200",
-    "editorOverviewRuler.addedForeground": "#228740",
+    "editorOverviewRuler.addedForeground": "#1C7838",
     "editorOverviewRuler.deletedForeground": "#B8342E",
     "editorOverviewRuler.selectionHighlightForeground": "#B5501AAA",
     "editor.foldBackground": "#B5501A1A",
@@ -130,7 +130,7 @@
     "terminal.ansiBrightBlack": "#B5AA8E",
     "terminal.ansiRed": "#B8342E",
     "terminal.ansiBrightRed": "#D9534F",
-    "terminal.ansiGreen": "#228740",
+    "terminal.ansiGreen": "#1C7838",
     "terminal.ansiBrightGreen": "#35B659",
     "terminal.ansiYellow": "#946200",
     "terminal.ansiBrightYellow": "#B98A2E",
@@ -145,7 +145,7 @@
     "terminal.selectionBackground": "#9462004D",
     "terminalCursor.foreground": "#B5501A",
 
-    "gitDecoration.addedResourceForeground": "#228740",
+    "gitDecoration.addedResourceForeground": "#1C7838",
     "gitDecoration.modifiedResourceForeground": "#946200",
     "gitDecoration.deletedResourceForeground": "#B8342E",
     "gitDecoration.untrackedResourceForeground": "#176EA1",
@@ -153,9 +153,9 @@
     "gitDecoration.conflictingResourceForeground": "#5C28BD",
     "gitDecoration.submoduleResourceForeground": "#8A4A1E",
 
-    "diffEditor.insertedTextBackground": "#22874038",
+    "diffEditor.insertedTextBackground": "#1C783838",
     "diffEditor.removedTextBackground": "#B8342E38",
-    "diffEditor.insertedLineBackground": "#22874024",
+    "diffEditor.insertedLineBackground": "#1C783824",
     "diffEditor.removedLineBackground": "#B8342E24",
     "diffEditor.border": "#DCD0B4",
 
@@ -251,23 +251,27 @@
     },
     {
       "scope": ["string", "string.quoted"],
-      "settings": { "foreground": "#8A5A1E" }
+      "settings": { "foreground": "#1C7838" }
     },
     {
-      "scope": ["string.template", "punctuation.definition.template-expression"],
-      "settings": { "foreground": "#8A4A1E" }
+      "scope": "string.template",
+      "settings": { "foreground": "#1C7838" }
+    },
+    {
+      "scope": "punctuation.definition.template-expression",
+      "settings": { "foreground": "#5C28BD" }
     },
     {
       "scope": "constant.numeric",
-      "settings": { "foreground": "#946A2E" }
+      "settings": { "foreground": "#176EA1" }
     },
     {
       "scope": "constant.language",
-      "settings": { "foreground": "#8A4A1E", "fontStyle": "bold" }
+      "settings": { "foreground": "#176EA1", "fontStyle": "bold" }
     },
     {
       "scope": "constant.character.escape",
-      "settings": { "foreground": "#B5501A" }
+      "settings": { "foreground": "#5C28BD" }
     },
     {
       "scope": ["keyword", "keyword.control"],
@@ -319,7 +323,7 @@
     },
     {
       "scope": ["variable.other.constant", "variable.other.readonly"],
-      "settings": { "foreground": "#8A4A1E", "fontStyle": "bold" }
+      "settings": { "foreground": "#176EA1", "fontStyle": "bold" }
     },
     {
       "scope": "support.type.property-name",
@@ -378,16 +382,16 @@
     "event": "#5C28BD",
     "variable": "#2B2A24",
     "parameter": { "foreground": "#5B5748", "fontStyle": "italic" },
-    "variable.readonly": { "foreground": "#8A4A1E", "fontStyle": "bold" },
+    "variable.readonly": { "foreground": "#176EA1", "fontStyle": "bold" },
     "property": "#176EA1",
-    "enumMember": "#8A4A1E",
+    "enumMember": "#176EA1",
     "namespace": { "foreground": "#5C28BD", "fontStyle": "italic" },
     "decorator": { "foreground": "#5C28BD", "fontStyle": "italic" },
     "macro": { "foreground": "#B5501A", "fontStyle": "italic" },
     "label": "#8A4A1E",
     "keyword": { "foreground": "#B5501A", "fontStyle": "italic" },
-    "number": "#946A2E",
-    "string": "#8A5A1E",
+    "number": "#176EA1",
+    "string": "#1C7838",
     "operator": "#5B5748",
     "regexp": "#5C28BD",
     "*.defaultLibrary": { "foreground": "#176EA1", "fontStyle": "italic" },

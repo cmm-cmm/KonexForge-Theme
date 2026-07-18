@@ -4,7 +4,24 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.5.0] - 2026-07-17
+## [0.5.0] - 2026-07-18
+
+### Changed
+
+- Rebalanced the warm/cool split in syntax highlighting so ordinary code
+  no longer renders as a wall of orange/amber. The warm family is now
+  limited to "action" tokens (keywords, tags, storage, functions/methods,
+  macros); high-frequency "data" tokens moved to cool hues in all 4
+  variants: **strings → green**, **numbers and constants**
+  (`constant.numeric`, `true`/`false`/`null`, `variable.other.constant`,
+  `enumMember`, `variable.readonly`) **→ steel blue** — finally matching
+  the "Info/constants (steel blue)" role the palette had documented all
+  along — and **escape characters + template-`${}` punctuation →
+  violet**, consistent with regex/decorators.
+- Darkened the Light variant's green role (`#228740` → `#1C7838`,
+  contrast 4.23 → 5.13 against the parchment background) since strings
+  now use it as body text; applied everywhere the role appears (git
+  added, diff inserted, `ansiGreen`).
 
 ### Added
 

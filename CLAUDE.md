@@ -83,9 +83,16 @@ copy-pasting the Dark value. Each file has three sections:
 
 The design language is: cool charcoal-slate backgrounds (blue-gray
 undertone, never pure neutral gray/black) + hot orange/amber/copper/rust
-accents, with three cool counterpoint hues (steel blue, slate teal, violet)
-reserved for types/constants/decorators so syntax categories stay visually
-distinct from the orange/amber "hero" accents. Key tokens (reuse these
+accents, balanced by four cool counterpoint hues (steel blue, slate teal,
+violet, green) so syntax categories stay visually distinct. The warm
+family is deliberately limited to the "action" tokens — keywords, tags,
+storage, functions/methods, and macros — while the "data" tokens are
+cool: **strings are green**, **numbers and constants (true/false/null,
+`variable.other.constant`, `enumMember`) are steel blue**, types/classes
+are slate teal, and decorators/regex/escape-chars/template-`${}` are
+violet. Don't move a data token back into the warm family — an earlier
+iteration had strings/numbers/constants all amber, and every line of
+ordinary code rendered as a wall of orange. Key tokens (reuse these
 hexes, don't invent new ones for the same role):
 
 | Role | Hex |
@@ -99,10 +106,10 @@ hexes, don't invent new ones for the same role):
 | Secondary accent (amber) | `#F5A623` |
 | Tertiary accent (copper) | `#C97B4A` |
 | Error (ember red) | `#E5484D` |
-| Info/constants (steel blue) | `#47A8E1` |
+| Numbers/constants/info (steel blue) | `#47A8E1` |
 | Types/classes (slate teal) | `#26C5B5` |
-| Decorators/regex (violet) | `#8F61E5` |
-| Success/added (green) | `#4BD26D` |
+| Decorators/regex/escapes (violet) | `#8F61E5` |
+| Strings + success/added (green) | `#4BD26D` |
 
 Steel blue, slate teal, violet, and green are deliberately saturated to
 read as vividly as the orange/amber heroes (not washed-out pastels) —
@@ -117,15 +124,15 @@ entirely warm-hued with nothing to tell the parts apart:
 `<div class="...">`) uses the **info/constants steel blue** accent
 instead of amber, and `string.quoted.double.html`/`string.quoted.single.html`
 (attribute-*value* strings specifically) use the **types/classes slate
-teal** accent instead of the generic warm string color — this is a
+teal** accent instead of the green generic string color — this is a
 narrower TextMate scope than the generic `string`/`string.quoted` rule
 above, so it wins by specificity without touching how regular code
 strings (JS/PHP/Python literals, including ones inside embedded
 `{{ ... }}` expressions in Blade) are colored. Net effect: `<div
 class="row">` reads as orange (tag) → steel blue (attribute name) → slate
 teal (attribute value), and an embedded `{{ __('key') }}` expression
-still reads in the standard amber "code" colors, so it visually stands
-out as code against the now cooler-toned surrounding markup.
+reads as amber function + green string, standing out as code against
+the surrounding markup.
 
 `terminal.ansiCyan`/`ansiBrightCyan` and `terminal.ansiMagenta`/
 `ansiBrightMagenta` are **standalone true hues** (cyan ~188°, magenta

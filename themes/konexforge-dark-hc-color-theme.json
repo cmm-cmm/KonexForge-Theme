@@ -259,23 +259,27 @@
     },
     {
       "scope": ["string", "string.quoted"],
-      "settings": { "foreground": "#FFC877" }
+      "settings": { "foreground": "#89E69D" }
     },
     {
-      "scope": ["string.template", "punctuation.definition.template-expression"],
-      "settings": { "foreground": "#E08F5C" }
+      "scope": "string.template",
+      "settings": { "foreground": "#89E69D" }
+    },
+    {
+      "scope": "punctuation.definition.template-expression",
+      "settings": { "foreground": "#C29CF6" }
     },
     {
       "scope": "constant.numeric",
-      "settings": { "foreground": "#FFC08A" }
+      "settings": { "foreground": "#7DC5F2" }
     },
     {
       "scope": "constant.language",
-      "settings": { "foreground": "#E08F5C", "fontStyle": "bold" }
+      "settings": { "foreground": "#7DC5F2", "fontStyle": "bold" }
     },
     {
       "scope": "constant.character.escape",
-      "settings": { "foreground": "#FFB067" }
+      "settings": { "foreground": "#C29CF6" }
     },
     {
       "scope": ["keyword", "keyword.control"],
@@ -327,7 +331,7 @@
     },
     {
       "scope": ["variable.other.constant", "variable.other.readonly"],
-      "settings": { "foreground": "#E08F5C", "fontStyle": "bold" }
+      "settings": { "foreground": "#7DC5F2", "fontStyle": "bold" }
     },
     {
       "scope": "support.type.property-name",
@@ -386,16 +390,16 @@
     "event": "#C29CF6",
     "variable": "#F5F0E8",
     "parameter": "#D6D0C0",
-    "variable.readonly": { "foreground": "#E08F5C", "fontStyle": "bold" },
+    "variable.readonly": { "foreground": "#7DC5F2", "fontStyle": "bold" },
     "property": "#7DC5F2",
-    "enumMember": "#E08F5C",
+    "enumMember": "#7DC5F2",
     "namespace": "#C29CF6",
     "decorator": "#C29CF6",
     "macro": "#FF8A4D",
     "label": "#E08F5C",
     "keyword": "#FF8A4D",
-    "number": "#FFC08A",
-    "string": "#FFC877",
+    "number": "#7DC5F2",
+    "string": "#89E69D",
     "operator": "#D6D0C0",
     "regexp": "#C29CF6",
     "*.defaultLibrary": "#7DC5F2",

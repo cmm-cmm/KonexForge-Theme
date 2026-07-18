@@ -251,23 +251,27 @@
     },
     {
       "scope": ["string", "string.quoted"],
-      "settings": { "foreground": "#E8B168" }
+      "settings": { "foreground": "#4BD26D" }
     },
     {
-      "scope": ["string.template", "punctuation.definition.template-expression"],
-      "settings": { "foreground": "#C97B4A" }
+      "scope": "string.template",
+      "settings": { "foreground": "#4BD26D" }
+    },
+    {
+      "scope": "punctuation.definition.template-expression",
+      "settings": { "foreground": "#8F61E5" }
     },
     {
       "scope": "constant.numeric",
-      "settings": { "foreground": "#D98E5A" }
+      "settings": { "foreground": "#47A8E1" }
     },
     {
       "scope": "constant.language",
-      "settings": { "foreground": "#C97B4A", "fontStyle": "bold" }
+      "settings": { "foreground": "#47A8E1", "fontStyle": "bold" }
     },
     {
       "scope": "constant.character.escape",
-      "settings": { "foreground": "#FFB067" }
+      "settings": { "foreground": "#8F61E5" }
     },
     {
       "scope": ["keyword", "keyword.control"],
@@ -319,7 +323,7 @@
     },
     {
       "scope": ["variable.other.constant", "variable.other.readonly"],
-      "settings": { "foreground": "#C97B4A", "fontStyle": "bold" }
+      "settings": { "foreground": "#47A8E1", "fontStyle": "bold" }
     },
     {
       "scope": "support.type.property-name",
@@ -378,16 +382,16 @@
     "event": "#8F61E5",
     "variable": "#E4E1DC",
     "parameter": { "foreground": "#C9CDD6", "fontStyle": "italic" },
-    "variable.readonly": { "foreground": "#C97B4A", "fontStyle": "bold" },
+    "variable.readonly": { "foreground": "#47A8E1", "fontStyle": "bold" },
     "property": "#47A8E1",
-    "enumMember": "#C97B4A",
+    "enumMember": "#47A8E1",
     "namespace": { "foreground": "#8F61E5", "fontStyle": "italic" },
     "decorator": { "foreground": "#8F61E5", "fontStyle": "italic" },
     "macro": { "foreground": "#FF7A33", "fontStyle": "italic" },
     "label": "#C97B4A",
     "keyword": { "foreground": "#FF7A33", "fontStyle": "italic" },
-    "number": "#D98E5A",
-    "string": "#E8B168",
+    "number": "#47A8E1",
+    "string": "#4BD26D",
     "operator": "#ABB3C0",
     "regexp": "#8F61E5",
     "*.defaultLibrary": { "foreground": "#47A8E1", "fontStyle": "italic" },
