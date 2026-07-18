@@ -4,7 +4,7 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.5.0] - 2026-07-18
+## [0.6.0] - 2026-07-18
 
 ### Changed
 
@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   contrast 4.23 → 5.13 against the parchment background) since strings
   now use it as body text; applied everywhere the role appears (git
   added, diff inserted, `ansiGreen`).
+
+## [0.5.0] - 2026-07-17
 
 ### Added
 
