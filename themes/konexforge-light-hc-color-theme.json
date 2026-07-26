@@ -26,7 +26,7 @@
     "editorWhitespace.foreground": "#4A4436",
     "editorRuler.foreground": "#4A4436",
     "editorGutter.background": "#FFFFFF",
-    "editorGutter.addedBackground": "#1B6A30",
+    "editorGutter.addedBackground": "#1A652E",
     "editorGutter.modifiedBackground": "#6E4800",
     "editorGutter.deletedBackground": "#A3242A",
     "editorGutter.foldingControlForeground": "#5C5642",
@@ -67,7 +67,7 @@
     "editorOverviewRuler.warningForeground": "#6E4800",
     "editorOverviewRuler.infoForeground": "#0A5E85",
     "editorOverviewRuler.modifiedForeground": "#6E4800",
-    "editorOverviewRuler.addedForeground": "#1B6A30",
+    "editorOverviewRuler.addedForeground": "#1A652E",
     "editorOverviewRuler.deletedForeground": "#A3242A",
     "editorOverviewRuler.selectionHighlightForeground": "#8F3400",
     "editor.foldBackground": "#EFE3DB",
@@ -134,7 +134,7 @@
     "terminal.ansiBrightBlack": "#8C8570",
     "terminal.ansiRed": "#A3242A",
     "terminal.ansiBrightRed": "#C13A3F",
-    "terminal.ansiGreen": "#1B6A30",
+    "terminal.ansiGreen": "#1A652E",
     "terminal.ansiBrightGreen": "#34894C",
     "terminal.ansiYellow": "#6E4800",
     "terminal.ansiBrightYellow": "#8F6418",
@@ -149,7 +149,7 @@
     "terminal.selectionBackground": "#D4C8B3",
     "terminalCursor.foreground": "#8F3400",
 
-    "gitDecoration.addedResourceForeground": "#1B6A30",
+    "gitDecoration.addedResourceForeground": "#1A652E",
     "gitDecoration.modifiedResourceForeground": "#6E4800",
     "gitDecoration.deletedResourceForeground": "#A3242A",
     "gitDecoration.untrackedResourceForeground": "#0A5E85",
@@ -275,9 +275,9 @@
     "symbolIcon.propertyForeground": "#0A5E85",
     "symbolIcon.constantForeground": "#0A5E85",
     "symbolIcon.keywordForeground": "#8F3400",
-    "symbolIcon.stringForeground": "#1B6A30",
+    "symbolIcon.stringForeground": "#1A652E",
     "debugIcon.breakpointForeground": "#A3242A",
-    "debugIcon.startForeground": "#1B6A30",
+    "debugIcon.startForeground": "#1A652E",
     "debugIcon.stopForeground": "#A3242A",
     "debugIcon.pauseForeground": "#6E4800",
     "debugToolBar.background": "#FFFFFF",
@@ -285,10 +285,10 @@
     "editor.focusedStackFrameHighlightBackground": "#DDE9E0",
     "debugTokenExpression.name": "#0A5E85",
     "debugTokenExpression.value": "#16150F",
-    "debugTokenExpression.string": "#1B6A30",
+    "debugTokenExpression.string": "#1A652E",
     "debugTokenExpression.number": "#0A5E85",
     "debugTokenExpression.boolean": "#0A5E85",
-    "testing.iconPassed": "#1B6A30",
+    "testing.iconPassed": "#1A652E",
     "testing.iconFailed": "#A3242A",
     "testing.iconQueued": "#6E4800",
     "testing.iconSkipped": "#5C5642",
@@ -296,7 +296,7 @@
     "charts.blue": "#0A5E85",
     "charts.yellow": "#6E4800",
     "charts.orange": "#8F3400",
-    "charts.green": "#1B6A30",
+    "charts.green": "#1A652E",
     "charts.purple": "#5224A8",
     "charts.foreground": "#16150F",
     "charts.lines": "#4A4436",
@@ -364,11 +364,11 @@
     },
     {
       "scope": ["string", "string.quoted"],
-      "settings": { "foreground": "#1B6A30" }
+      "settings": { "foreground": "#1A652E" }
     },
     {
       "scope": "string.template",
-      "settings": { "foreground": "#1B6A30" }
+      "settings": { "foreground": "#1A652E" }
     },
     {
       "scope": ["punctuation.definition.template-expression", "punctuation.definition.interpolation", "constant.character.format.placeholder"],
@@ -508,7 +508,7 @@
     },
     {
       "scope": ["markup.inserted"],
-      "settings": { "foreground": "#1B6A30" }
+      "settings": { "foreground": "#1A652E" }
     },
     {
       "scope": ["markup.deleted"],
@@ -580,7 +580,7 @@
     "label": "#7A3E14",
     "keyword": "#8F3400",
     "number": "#0A5E85",
-    "string": "#1B6A30",
+    "string": "#1A652E",
     "operator": "#433F31",
     "regexp": "#5224A8",
     "selfParameter": { "foreground": "#7A3E14", "fontStyle": "bold" },

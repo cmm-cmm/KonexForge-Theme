@@ -4,6 +4,47 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.8.1] - 2026-07-26
+
+### Fixed
+
+- Six colors that fell short of their contrast target, nudged minimally
+  with hue and saturation held constant:
+  - Dark's violet `#8F61E5` → `#9367E6` (4.28:1 → 4.55:1) and Light's teal
+    `#158475` → `#147E70` (4.24:1 → 4.58:1), both now clearing WCAG AA;
+    Light High Contrast's green `#1B6A30` → `#1A652E` (6.66:1 → 7.13:1),
+    now clearing AAA. Applied everywhere each role hex appears so the
+    palette stays coherent.
+  - The de-emphasized chrome color used by inactive tabs, line numbers,
+    breadcrumbs and `ansiBrightBlack`: Dark `#4A5261` → `#5F6A7D`
+    (2.13:1 → 3.06:1) and Light `#B5AA8E` → `#90825F` (1.86:1 → 3.05:1).
+    Light's line numbers in particular were effectively unreadable.
+  - The `invalid` scope's text on its red badge: Light `#241605` →
+    `#FAF6ED` (2.99:1 → 5.46:1), Dark High Contrast `#1A1105` →
+    `#000000` (6.46:1 → 7.28:1).
+- `README.md` advertised `#45B8AC` as the type/class accent — a value the
+  themes stopped using in 0.4.0. Anyone pasting it into
+  `workbench.colorCustomizations` got the pre-0.4.0 washed-out teal. The
+  Customization section now lists all 13 role colors with what each one is
+  used for, the install snippet no longer pins 0.3.0, the italic
+  description matches the actual italic set, and the stale "screenshots
+  coming soon" placeholder is replaced with a description of the
+  warm-action / cool-data split the theme actually uses.
+
+### Added
+
+- Two validator checks, both covering classes of drift that had already
+  happened at least once:
+  - **Contrast.** Every opaque `tokenColors` / `semanticTokenColors`
+    foreground and 15 primary UI label/surface pairs must hit WCAG AA
+    (4.5:1) in Dark/Light and AAA (7:1) in the High Contrast variants;
+    five deliberately dim chrome pairs must clear the 3:1 floor WCAG uses
+    for UI components. Entries that paint their own background are
+    measured against it. Translucent values are skipped rather than
+    guessed at.
+  - **Documented hexes.** Every `#RRGGBB` quoted in `README.md` or
+    `CLAUDE.md` must still be a live value in at least one theme file.
+
 ## [0.8.0] - 2026-07-18
 
 ### Added

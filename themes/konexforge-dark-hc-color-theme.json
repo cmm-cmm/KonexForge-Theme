@@ -480,7 +480,7 @@
     },
     {
       "scope": "invalid",
-      "settings": { "foreground": "#1A1105", "background": "#FF6469", "fontStyle": "bold" }
+      "settings": { "foreground": "#000000", "background": "#FF6469", "fontStyle": "bold" }
     },
     {
       "scope": "markup.bold",

@@ -64,9 +64,51 @@ const ITALIC_SEMANTIC_TOKENS = new Set([
   '*.defaultLibrary',
 ]);
 
-const BRACKET_SEQUENCE = ['#FF7A33', '#F5A623', '#47A8E1', '#26C5B5', '#8F61E5', '#C97B4A'];
+const BRACKET_SEQUENCE = ['#FF7A33', '#F5A623', '#47A8E1', '#26C5B5', '#9367E6', '#C97B4A'];
 
 const HEX_RE = /^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
+
+// --- Contrast policy -------------------------------------------------------
+// Text the user actually reads (syntax tokens + primary UI labels) must hit
+// WCAG AA in Dark/Light and AAA in the two High Contrast variants. Chrome
+// that is de-emphasized on purpose (inactive tabs, line numbers, breadcrumbs)
+// only has to clear the 3:1 floor WCAG uses for UI components — but it does
+// have to clear it, which is why these are listed rather than exempted.
+const TEXT_CONTRAST = { dark: 4.5, light: 4.5, 'dark-hc': 7, 'light-hc': 7 };
+const MUTED_CONTRAST = 3;
+
+// UI label/surface pairs held to TEXT_CONTRAST.
+const UI_TEXT_PAIRS = [
+  ['editor.foreground', 'editor.background'],
+  ['sideBar.foreground', 'sideBar.background'],
+  ['statusBar.foreground', 'statusBar.background'],
+  ['activityBar.foreground', 'activityBar.background'],
+  ['tab.activeForeground', 'tab.activeBackground'],
+  ['terminal.foreground', 'terminal.background'],
+  ['input.foreground', 'input.background'],
+  ['editorWidget.foreground', 'editorWidget.background'],
+  ['menu.foreground', 'menu.background'],
+  ['notifications.foreground', 'notifications.background'],
+  ['editorSuggestWidget.foreground', 'editorSuggestWidget.background'],
+  ['button.foreground', 'button.background'],
+  ['badge.foreground', 'badge.background'],
+  ['editorLineNumber.activeForeground', 'editor.background'],
+  ['editorCodeLens.foreground', 'editor.background'],
+];
+
+// Deliberately dim chrome, held to MUTED_CONTRAST.
+const UI_MUTED_PAIRS = [
+  ['tab.inactiveForeground', 'tab.inactiveBackground'],
+  ['editorLineNumber.foreground', 'editor.background'],
+  ['breadcrumb.foreground', 'editor.background'],
+  ['activityBar.inactiveForeground', 'activityBar.background'],
+  ['panelTitle.inactiveForeground', 'panel.background'],
+];
+
+// Docs that quote palette hexes; every #RRGGBB they mention must still be a
+// live value in at least one theme file. Catches the palette drift that let
+// README advertise a teal the themes had already moved off of.
+const HEX_DOC_FILES = ['README.md', 'CLAUDE.md'];
 
 const errors = [];
 function fail(msg) {
@@ -88,6 +130,28 @@ function hasAlpha(hex) {
 function isItalic(settings) {
   return typeof settings === 'object' && settings !== null &&
     /\bitalic\b/.test(settings.fontStyle || '');
+}
+
+// Relative luminance / contrast ratio per WCAG 2.1. Alpha is ignored: a
+// translucent value's effective contrast depends on what is behind it, so
+// those are skipped rather than guessed at.
+function luminance(hex) {
+  const h = hex.slice(1, 7);
+  const channels = [0, 2, 4]
+    .map((i) => parseInt(h.slice(i, i + 2), 16) / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+  return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+}
+
+function contrast(fg, bg) {
+  const a = luminance(fg);
+  const b = luminance(bg);
+  const [hi, lo] = a > b ? [a, b] : [b, a];
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+function isOpaqueHex(v) {
+  return typeof v === 'string' && /^#[0-9A-Fa-f]{6}$/.test(v);
 }
 
 // --- Load everything ------------------------------------------------------
@@ -247,6 +311,94 @@ const declaredPaths = new Set(contributed.map((t) => path.normalize(t.path)));
 for (const rel of Object.values(VARIANTS)) {
   if (!declaredPaths.has(path.normalize('./' + rel))) {
     fail(`package.json: "${rel}" is not listed in contributes.themes`);
+  }
+}
+
+// --- 9. Contrast ------------------------------------------------------------
+
+for (const [name, theme] of Object.entries(themes)) {
+  const min = TEXT_CONTRAST[name];
+  const editorBg = theme.colors['editor.background'];
+  if (!isOpaqueHex(editorBg)) {
+    fail(`${name}: editor.background must be an opaque hex to check contrast against`);
+    continue;
+  }
+
+  // Syntax tokens. Entries that paint their own background (e.g. `invalid`)
+  // are measured against that background, not the editor's.
+  theme.tokenColors.forEach((entry, i) => {
+    const settings = entry.settings || {};
+    const fg = settings.foreground;
+    if (!isOpaqueHex(fg)) return;
+    const bg = isOpaqueHex(settings.background) ? settings.background : editorBg;
+    const ratio = contrast(fg, bg);
+    if (ratio < min) {
+      fail(
+        `${name}: tokenColors[${i}] ${JSON.stringify(entry.scope)} ` +
+          `${fg} on ${bg} = ${ratio.toFixed(2)}:1, below ${min}:1`
+      );
+    }
+  });
+
+  for (const [token, settings] of Object.entries(theme.semanticTokenColors)) {
+    const fg = typeof settings === 'string' ? settings : settings && settings.foreground;
+    if (!isOpaqueHex(fg)) continue;
+    const ratio = contrast(fg, editorBg);
+    if (ratio < min) {
+      fail(
+        `${name}: semanticTokenColors "${token}" ${fg} on ${editorBg} = ` +
+          `${ratio.toFixed(2)}:1, below ${min}:1`
+      );
+    }
+  }
+
+  const checkPairs = (pairs, threshold, label) => {
+    for (const [fgKey, bgKey] of pairs) {
+      const fg = theme.colors[fgKey];
+      const bg = theme.colors[bgKey];
+      if (!isOpaqueHex(fg) || !isOpaqueHex(bg)) continue;
+      const ratio = contrast(fg, bg);
+      if (ratio < threshold) {
+        fail(
+          `${name}: ${fgKey} ${fg} on ${bgKey} ${bg} = ${ratio.toFixed(2)}:1, ` +
+            `below ${threshold}:1 (${label})`
+        );
+      }
+    }
+  };
+  checkPairs(UI_TEXT_PAIRS, min, 'UI text');
+  checkPairs(UI_MUTED_PAIRS, MUTED_CONTRAST, 'de-emphasized chrome');
+}
+
+// --- 10. Docs quote only live palette hexes ---------------------------------
+
+const livePaletteHexes = new Set();
+for (const theme of Object.values(themes)) {
+  const add = (v) => {
+    if (typeof v === 'string' && /^#[0-9A-Fa-f]{6,8}$/.test(v)) {
+      livePaletteHexes.add(v.slice(0, 7).toUpperCase());
+    }
+  };
+  Object.values(theme.colors).forEach(add);
+  theme.tokenColors.forEach((e) => {
+    const s = e.settings || {};
+    add(s.foreground);
+    add(s.background);
+  });
+  Object.values(theme.semanticTokenColors).forEach((s) => {
+    add(typeof s === 'string' ? s : s && s.foreground);
+  });
+}
+
+for (const rel of HEX_DOC_FILES) {
+  const file = path.join(ROOT, rel);
+  if (!fs.existsSync(file)) continue;
+  const text = fs.readFileSync(file, 'utf8');
+  const quoted = new Set((text.match(/#[0-9A-Fa-f]{6}\b/g) || []).map((h) => h.toUpperCase()));
+  for (const hex of quoted) {
+    if (!livePaletteHexes.has(hex)) {
+      fail(`${rel}: documents ${hex}, which no theme file uses any more (palette drift)`);
+    }
   }
 }
 

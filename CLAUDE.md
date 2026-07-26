@@ -108,7 +108,7 @@ hexes, don't invent new ones for the same role):
 | Error (ember red) | `#E5484D` |
 | Numbers/constants/info (steel blue) | `#47A8E1` |
 | Types/classes (slate teal) | `#26C5B5` |
-| Decorators/regex/escapes (violet) | `#8F61E5` |
+| Decorators/regex/escapes (violet) | `#9367E6` |
 | Strings + success/added (green) | `#4BD26D` |
 
 Steel blue, slate teal, violet, and green are deliberately saturated to
