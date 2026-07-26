@@ -27,6 +27,14 @@ const EXPECTED = new Set([
   'themes/konexforge-light-hc-color-theme.json',
 ]);
 
+// Entries arrive on stdin, so they are untrusted text: a "filename" carrying
+// a newline or control character would forge extra lines in the report below.
+// Only well-formed relative paths are echoed back verbatim; anything else is
+// described by shape instead of quoted.
+const SAFE_PATH = /^[.A-Za-z0-9][A-Za-z0-9._/-]{0,199}$/;
+const describe = (name) =>
+  SAFE_PATH.test(name) ? name : `<malformed entry, ${name.length} char(s)>`;
+
 let input = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', (chunk) => {
@@ -43,7 +51,7 @@ process.stdin.on('end', () => {
   }
 
   const errors = [];
-  for (const f of actual) if (!EXPECTED.has(f)) errors.push(`unexpected file in the VSIX: ${f}`);
+  for (const f of actual) if (!EXPECTED.has(f)) errors.push(`unexpected file in the VSIX: ${describe(f)}`);
   for (const f of EXPECTED) if (!actual.has(f)) errors.push(`missing from the VSIX: ${f}`);
 
   if (errors.length) {
