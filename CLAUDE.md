@@ -83,9 +83,16 @@ copy-pasting the Dark value. Each file has three sections:
 
 The design language is: cool charcoal-slate backgrounds (blue-gray
 undertone, never pure neutral gray/black) + hot orange/amber/copper/rust
-accents, with three cool counterpoint hues (steel blue, slate teal, violet)
-reserved for types/constants/decorators so syntax categories stay visually
-distinct from the orange/amber "hero" accents. Key tokens (reuse these
+accents, balanced by four cool counterpoint hues (steel blue, slate teal,
+violet, green) so syntax categories stay visually distinct. The warm
+family is deliberately limited to the "action" tokens — keywords, tags,
+storage, functions/methods, and macros — while the "data" tokens are
+cool: **strings are green**, **numbers and constants (true/false/null,
+`variable.other.constant`, `enumMember`) are steel blue**, types/classes
+are slate teal, and decorators/regex/escape-chars/template-`${}` are
+violet. Don't move a data token back into the warm family — an earlier
+iteration had strings/numbers/constants all amber, and every line of
+ordinary code rendered as a wall of orange. Key tokens (reuse these
 hexes, don't invent new ones for the same role):
 
 | Role | Hex |
@@ -99,15 +106,80 @@ hexes, don't invent new ones for the same role):
 | Secondary accent (amber) | `#F5A623` |
 | Tertiary accent (copper) | `#C97B4A` |
 | Error (ember red) | `#E5484D` |
-| Info/constants (steel blue) | `#47A8E1` |
+| Numbers/constants/info (steel blue) | `#47A8E1` |
 | Types/classes (slate teal) | `#26C5B5` |
-| Decorators/regex (violet) | `#8F61E5` |
-| Success/added (green) | `#4BD26D` |
+| Decorators/regex/escapes (violet) | `#9367E6` |
+| Strings + success/added (green) | `#4BD26D` |
 
 Steel blue, slate teal, violet, and green are deliberately saturated to
 read as vividly as the orange/amber heroes (not washed-out pastels) —
 when re-deriving a variant's hex for one of these roles, boost saturation
 to match, don't just lighten/darken the existing value.
+
+Language-coverage rules (tuned for JS/TS/JSX/TSX, C/C++, PHP, Python,
+C#, and validated by simulating TextMate prefix matching):
+`variable.language` (`this`, `self`, `super`, `$this`) is **copper
+bold** — copper's dedicated token role now that constants moved to
+steel blue; the Pylance semantic tokens `selfParameter`/`clsParameter`
+match it. Built-in primitive types (`storage.type.built-in` for C/C++,
+`keyword.type` for C#) are slate teal like all other types — without
+this rule C#'s `int`/`string` would inherit the italic-orange keyword
+style. `support.constant`/`support.variable` (built-in objects and
+constants: `console`, `window`, `Math.PI`, CSS property values) and the
+semantic `builtinConstant` are steel blue. Python decorators
+(`entity.name.function.decorator` + `punctuation.definition.decorator`)
+join the violet decorator set, and C# `$"{x}"` interpolation braces +
+Python f-string placeholders join the violet template-`${}` rule.
+`storage.type.function.arrow` (the JS/TS `=>`) is demoted to operator
+gray — arrow functions are too frequent in modern JS for rust-orange.
+
+Auxiliary-format rules (same role logic): **YAML mapping keys**
+(`entity.name.tag.yaml`) are steel blue, overriding the orange
+`entity.name.tag` — a config file full of keys must not become an
+orange wall. Diff/patch content maps to the git colors
+(`markup.inserted` green, `markup.deleted` red, `markup.changed`
+amber, `meta.diff.header` steel blue, `meta.diff.range` violet).
+Shell `$VAR` / Ruby `@var` are steel blue; `entity.name.command.shell`
+is amber like other callables. Regex internals (char classes,
+quantifiers) stay in the violet family with the rest of the regex.
+SQL table/database names are teal; `constant.other.enum` is steel
+blue. Markdown: `markup.quote` is comment-muted,
+`punctuation.definition.heading` matches the orange heading, and
+`markup.strikethrough` gets `fontStyle: strikethrough` (no color).
+
+The `colors` section also covers the full workbench surface beyond the
+basics: error/warning/info squiggles and problem icons, `textLink.*`,
+inlay hints, CodeLens/ghost text, `symbolIcon.*` (mapped to the token
+roles: classes teal, functions amber, constants/properties steel blue,
+keywords orange, strings green), debug (icons, stack-frame highlights,
+`debugTokenExpression.*`), `testing.icon*`, `charts.*`,
+`inputValidation.*` (solid pre-blended backgrounds in every variant),
+keybinding labels, merge headers, minimap error/warning, notebooks
+(`notebook.*` cell borders/backgrounds and `notebookStatus*Icon`
+green/red/amber), terminal shell-integration decorations
+(`terminalCommandDecoration.*`) and sticky scroll, the diff editor's
+collapsed unchanged regions, chat/inline-chat surfaces, `scmGraph.*`
+ref colors, `profileBadge.*`, `menubar.selection*`, and marker
+navigation. All of these reuse the role hexes above — when adding a
+new UI key, pick the role color, don't invent a new hex.
+
+**Markup/template files (HTML, JSX, Blade, Vue, etc.)** get their own
+break from the orange/amber family, since a typical line there (a tag,
+an attribute name, an attribute-value string) would otherwise be almost
+entirely warm-hued with nothing to tell the parts apart:
+`entity.other.attribute-name` (attribute/prop names, e.g. `class` in
+`<div class="...">`) uses the **info/constants steel blue** accent
+instead of amber, and `string.quoted.double.html`/`string.quoted.single.html`
+(attribute-*value* strings specifically) use the **types/classes slate
+teal** accent instead of the green generic string color — this is a
+narrower TextMate scope than the generic `string`/`string.quoted` rule
+above, so it wins by specificity without touching how regular code
+strings (JS/PHP/Python literals, including ones inside embedded
+`{{ ... }}` expressions in Blade) are colored. Net effect: `<div
+class="row">` reads as orange (tag) → steel blue (attribute name) → slate
+teal (attribute value), and an embedded `{{ __('key') }}` expression
+reads as amber function + green string, standing out as code against
+the surrounding markup.
 
 `terminal.ansiCyan`/`ansiBrightCyan` and `terminal.ansiMagenta`/
 `ansiBrightMagenta` are **standalone true hues** (cyan ~188°, magenta
@@ -121,10 +193,14 @@ rather than being the code itself. The exact italic set (identical in both
 files; the validate script enforces it):
 
 - `tokenColors` scopes: `comment`/`comment.line`/`comment.block`,
-  `comment.block.documentation`, `keyword`/`keyword.control`,
-  `entity.other.inherited-class`, `entity.other.attribute-name`,
-  `variable.parameter`, `meta.decorator`/`punctuation.decorator`, and
-  `markup.italic` (semantic — it renders Markdown emphasis).
+  `comment.block.documentation`, `keyword`/`keyword.control`, the
+  word-like operators (`keyword.operator.new`/`.expression`/
+  `.logical.python`/`.sizeof`/`.cast` — they read as keywords, not
+  punctuation), `entity.other.inherited-class`,
+  `entity.other.attribute-name`, `variable.parameter`,
+  `meta.decorator`/`punctuation.decorator`/
+  `entity.name.function.decorator`/`punctuation.definition.decorator`,
+  and `markup.italic` (semantic — it renders Markdown emphasis).
 - `semanticTokenColors`: `keyword`, `parameter`, `namespace`, `decorator`,
   `macro`, `*.defaultLibrary`.
 

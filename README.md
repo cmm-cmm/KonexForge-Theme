@@ -8,13 +8,25 @@ carried consistently across a dark, a light, and two high-contrast
 variants. Designed to be distinct, striking, and easy on the eyes during
 long sessions.
 
-## Preview
+## What it looks like
 
-> _Screenshots coming soon — capture from the Extension Development Host:_
-> - `images/screenshots/editor-overview.png` — a TypeScript/JSX file showing
->   functions, classes, strings, and JSX tags.
-> - `images/screenshots/terminal-and-panels.png` — sidebar, integrated
->   terminal, and status bar visible together.
+The warm accents are reserved for the "action" parts of code — keywords,
+tags, storage modifiers, function and method names, macros. The
+high-frequency "data" parts are cool, so an ordinary line of code doesn't
+turn into a wall of orange:
+
+| You'll see | In |
+|---|---|
+| Keywords, tags, storage, `this`/`self` | orange / amber / copper |
+| Strings | green |
+| Numbers, constants, built-ins, YAML keys | steel blue |
+| Types, classes, HTML attribute values | slate teal |
+| Decorators, regex, escapes, `${...}` | violet |
+| Comments | muted blue-gray, italic (Dark/Light only) |
+
+So `<div class="row">` reads orange tag → steel-blue attribute name →
+slate-teal value, and `const n = 42` reads orange keyword → plain text →
+steel-blue number.
 
 ## The theme family
 
@@ -42,10 +54,14 @@ you use them.
   and more.
 - Semantic highlighting support for richer accuracy in TypeScript, Python,
   Rust, Go, C#, and other LSP-backed languages.
-- Deliberate, sparing use of italics in Dark/Light — comments and
-  control-flow keywords are italic; everything else stays upright for fast
-  scanning. Both High Contrast variants drop italics entirely for maximum
-  legibility.
+- Deliberate, sparing use of italics in Dark/Light — reserved for the
+  "annotation layer" that describes other code: comments, keywords,
+  parameters, decorators, and markup attribute names. Storage, functions,
+  types, strings, and plain variables stay upright for fast scanning. Both
+  High Contrast variants drop italics entirely for maximum legibility.
+- Every syntax color meets WCAG AA (4.5:1) against its background in
+  Dark/Light and AAA (7:1) in both High Contrast variants — enforced
+  automatically on every commit, not just eyeballed.
 
 ## Installation
 
@@ -61,7 +77,7 @@ Installing the extension gives you all four theme variants.
 **From a VSIX file:**
 
 ```
-code --install-extension konexforge-themes-0.3.0.vsix
+code --install-extension konexforge-themes-0.9.0.vsix
 ```
 
 ## Activating the theme
@@ -72,20 +88,31 @@ choose one of **KonexForge Dark** / **KonexForge Light** /
 
 ## Customization
 
-Each variant is built from a small set of core colors if you want to tweak
-things via `workbench.colorCustomizations`. The Dark theme's core colors:
+Each variant is built from a small set of role colors if you want to tweak
+things via `workbench.colorCustomizations`. The Dark theme's full role
+palette:
 
-| Role | Hex |
-|---|---|
-| Editor background | `#14171C` |
-| Primary accent (orange) | `#FF7A33` |
-| Secondary accent (amber) | `#F5A623` |
-| Tertiary accent (copper) | `#C97B4A` |
-| Type/class accent (teal) | `#45B8AC` |
+| Role | Hex | Used for |
+|---|---|---|
+| Editor background | `#14171C` | editor surface |
+| Panel/sidebar surface | `#1A1E24` | sidebar, panel, activity bar |
+| Overlay surface | `#20252C` | menus, hover, suggest widget |
+| Primary text | `#E4E1DC` | body text |
+| Muted text | `#7C8494` | comments, CodeLens, ghost text |
+| Primary accent (orange) | `#FF7A33` | keywords, tags, storage |
+| Secondary accent (amber) | `#F5A623` | functions, methods, macros |
+| Tertiary accent (copper) | `#C97B4A` | `this` / `self` / `$this` |
+| Info accent (steel blue) | `#47A8E1` | numbers, constants, attribute names |
+| Type accent (slate teal) | `#26C5B5` | types, classes, attribute values |
+| Decorator accent (violet) | `#9367E6` | decorators, regex, escapes |
+| Success accent (green) | `#4BD26D` | strings, git added, diff inserted |
+| Error accent (ember red) | `#E5484D` | errors, git deleted |
 
-Light and both High Contrast variants re-derive lightness/contrast per
-variant from these same hue identities — see `CHANGELOG.md` for the 0.3.0
-palette additions.
+Light and both High Contrast variants re-derive lightness per variant from
+these same hue identities — deeper on the warm parchment background of
+Light, brighter or deeper still in the High Contrast pair — so all four
+read as one family. Don't copy Dark's hexes into Light: they won't meet
+contrast there.
 
 ## Recommended settings
 
