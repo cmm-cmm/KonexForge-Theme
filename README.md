@@ -10,6 +10,23 @@ long sessions.
 
 ## What it looks like
 
+![KonexForge Dark](https://raw.githubusercontent.com/cmm-cmm/KonexForge-Theme/main/images/preview-dark.png)
+
+<details>
+<summary>Light, and both High Contrast variants</summary>
+
+![KonexForge Light](https://raw.githubusercontent.com/cmm-cmm/KonexForge-Theme/main/images/preview-light.png)
+
+![KonexForge Dark High Contrast](https://raw.githubusercontent.com/cmm-cmm/KonexForge-Theme/main/images/preview-dark-hc.png)
+
+![KonexForge Light High Contrast](https://raw.githubusercontent.com/cmm-cmm/KonexForge-Theme/main/images/preview-light-hc.png)
+
+</details>
+
+These previews are generated from the theme files themselves
+(`node scripts/render-preview.js`), resolving each token through the same
+scope lookup VSCode uses — so they can't drift from the actual themes.
+
 The warm accents are reserved for the "action" parts of code — keywords,
 tags, storage modifiers, function and method names, macros. The
 high-frequency "data" parts are cool, so an ordinary line of code doesn't
@@ -21,12 +38,16 @@ turn into a wall of orange:
 | Strings | green |
 | Numbers, constants, built-ins, YAML keys | steel blue |
 | Types, classes, HTML attribute values | slate teal |
-| Decorators, regex, escapes, `${...}` | violet |
+| Decorators, annotations, regex, escapes, `${...}` | violet |
 | Comments | muted blue-gray, italic (Dark/Light only) |
 
 So `<div class="row">` reads orange tag → steel-blue attribute name →
 slate-teal value, and `const n = 42` reads orange keyword → plain text →
 steel-blue number.
+
+Between comments and body text sits a four-step neutral ramp — doc comments,
+punctuation, operators and parameters each get their own weight, in all four
+variants — so structure stays readable without pulling colour into it.
 
 ## The theme family
 
@@ -50,10 +71,14 @@ you use them.
   visual hero, balanced by cool counterpoint hues (steel blue, slate teal,
   violet) so syntax categories stay easy to tell apart.
 - Full workbench theming: activity bar, status bar, tabs, terminal
-  (16-color ANSI palette), git decorations, diff editor, notifications,
+  (16-color ANSI palette), git decorations, diff editor, notebooks, debug
+  console, three-way merge editor, testing and coverage, notifications,
   and more.
 - Semantic highlighting support for richer accuracy in TypeScript, Python,
   Rust, Go, C#, and other LSP-backed languages.
+- Syntax tuned per language rather than left to generic fallbacks: CSS/SCSS
+  selectors, units and colour literals; Java/Kotlin annotations; Markdown
+  lists, fences and separators; Rust lifetimes; YAML, diff, shell and SQL.
 - Deliberate, sparing use of italics in Dark/Light — reserved for the
   "annotation layer" that describes other code: comments, keywords,
   parameters, decorators, and markup attribute names. Storage, functions,
@@ -61,7 +86,9 @@ you use them.
   High Contrast variants drop italics entirely for maximum legibility.
 - Every syntax color meets WCAG AA (4.5:1) against its background in
   Dark/Light and AAA (7:1) in both High Contrast variants — enforced
-  automatically on every commit, not just eyeballed.
+  automatically on every commit, not just eyeballed. The same check
+  guarantees the four variants keep identical *roles*, not just identical
+  keys, so no variant quietly flattens a distinction the others make.
 
 ## Installation
 
@@ -77,7 +104,7 @@ Installing the extension gives you all four theme variants.
 **From a VSIX file:**
 
 ```
-code --install-extension konexforge-themes-0.9.0.vsix
+code --install-extension konexforge-themes-1.0.0.vsix
 ```
 
 ## Activating the theme

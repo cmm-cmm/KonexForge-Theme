@@ -4,6 +4,65 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.0] - 2026-07-26
+
+### Fixed
+
+- **Light and both High Contrast variants had collapsed Dark's neutral ramp
+  into a single gray.** Doc comments, punctuation, operators, the JS/TS `=>`
+  and function parameters all rendered in one identical color, flattening
+  distinctions Dark makes. All three variants now carry the same four steps
+  as Dark, placed at matching luminance fractions along each variant's own
+  comment→text range.
+- CSS/SCSS syntax, which the generic rules had been mis-coloring:
+  - `.class` / `#id` / pseudo-class selectors inherited the steel-blue
+    *italic* meant for HTML attribute names — a selector is not part of the
+    annotation layer. Now amber, upright.
+  - `px` / `rem` / `%` units inherited the italic orange of `keyword`. Now
+    steel blue, with the number they follow.
+  - Hex and `rgb()` color literals fell through to the editor default. Now
+    steel blue.
+  - SCSS `$vars` and CSS custom properties rendered as plain text. Now steel
+    blue.
+- Java/Kotlin annotations (`@Override`) sat with `storage.type` in rust
+  orange instead of the violet decorator family used for Python and
+  TypeScript decorators.
+- TypeScript's `support.type.primitive` was left at the editor default,
+  though the equivalent C/C++ and C# built-in-type rules already existed.
+  Now slate teal like every other type.
+
+### Added
+
+- Syntax coverage for scopes that were still falling through to the editor
+  default: Markdown list bullets, fenced-code blocks and their language tag,
+  and `---` separators; Rust lifetimes; namespaces/packages/modules; labels;
+  object and struct members and unquoted object-literal keys.
+- The five root-level fallback keys — `foreground`, `descriptionForeground`,
+  `errorForeground`, `disabledForeground`, `selection.background` — which
+  VSCode uses for every surface a theme doesn't name explicitly. Only
+  `focusBorder` had been set before, leaving the long tail of widgets on
+  VSCode's own gray palette.
+- Workbench surfaces still on defaults (+87 `colors` keys per variant, 474
+  total, 481 in the HC files): the debug console and exception widget, the
+  three-way merge editor, comment threads and their gutter glyphs, the
+  multi-file diff editor, testing peek/message/coverage, notebook
+  scrollbars, extension-view icons, the terminal overview ruler, and
+  assorted tree/table/chat keys.
+- Two validator checks, each closing the gap that let the bugs above ship:
+  - **Scope coverage** — 39 real-world scopes pinned to the role they must
+    resolve to, run through the same longest-prefix-wins lookup VSCode
+    uses. Fails if a scope reaches the editor default or lands in the wrong
+    role family.
+  - **Role partition parity** — groups scopes by shared foreground per file
+    and requires all four groupings to match. The previous checks compared
+    structure only, so a variant merging two roles was invisible.
+- `scripts/render-preview.js`, which renders a preview image per variant
+  from the theme files themselves, resolving every token through that same
+  scope lookup. README now shows all four; they cannot drift from the
+  themes the way a hand-taken screenshot does.
+- A CI job that packages the extension and asserts the VSIX file list, so
+  development-only directories can't leak into a release again.
+
 ## [0.9.0] - 2026-07-26
 
 ### Added

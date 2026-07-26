@@ -110,6 +110,61 @@ const UI_MUTED_PAIRS = [
 // README advertise a teal the themes had already moved off of.
 const HEX_DOC_FILES = ['README.md', 'CLAUDE.md'];
 
+// --- Scope coverage policy -------------------------------------------------
+// Real-world scopes drawn from the languages the palette is tuned for, each
+// pinned to the role it must resolve to. Checks 1-3 only compare structure
+// between files, so before this existed a scope could quietly fall through to
+// VSCode's default (CSS hex values, Markdown fences, Rust lifetimes all did)
+// or land in the wrong role family (`.class` selectors inherited the HTML
+// attribute-name style; Java annotations sat with `storage.type` instead of
+// the violet decorator family). Role names resolve per variant in
+// `roleAnchors` below, so one fixture covers all four files.
+const SCOPE_FIXTURE = [
+  ['comment.line.double-slash.js', 'comment'],
+  ['string.quoted.double.python', 'green'],
+  ['constant.numeric.integer.python', 'blue'],
+  ['constant.language.python', 'blue'],
+  ['entity.name.type.class.python', 'teal'],
+  ['entity.name.function.python', 'amber'],
+  ['keyword.control.flow.python', 'orange'],
+  ['variable.language.this.js', 'copper'],
+  // CSS/SCSS: selectors are not the HTML annotation layer, units are not
+  // keywords, and hex color values must not fall through to the default.
+  ['entity.other.attribute-name.class.css', 'amber'],
+  ['keyword.other.unit.px.css', 'blue'],
+  ['constant.other.color.rgb-value.hex.css', 'blue'],
+  ['variable.scss', 'blue'],
+  ['support.type.property-name.css', 'blue'],
+  // HTML keeps the steel-blue attribute name / teal attribute value split.
+  ['entity.other.attribute-name.id.html', 'blue'],
+  ['string.quoted.double.html', 'teal'],
+  ['storage.type.annotation.java', 'violet'],
+  ['support.type.primitive.ts', 'teal'],
+  ['keyword.type.cs', 'teal'],
+  ['storage.type.built-in.c', 'teal'],
+  ['meta.object-literal.key.js', 'blue'],
+  ['variable.other.member.cpp', 'blue'],
+  ['storage.type.function.arrow.js', 'punct'],
+  // Markdown structure.
+  ['punctuation.definition.list.begin.markdown', 'amber'],
+  ['markup.list.unnumbered.markdown', 'text'],
+  ['markup.fenced_code.block.markdown', 'text'],
+  ['fenced_code.block.language.markdown', 'teal'],
+  ['meta.separator.markdown', 'comment'],
+  ['storage.modifier.lifetime.rust', 'copper'],
+  ['entity.name.namespace.cs', 'violet'],
+  ['entity.name.label.c', 'copper'],
+  ['entity.name.tag.yaml', 'blue'],
+  ['markup.inserted.diff', 'green'],
+  ['markup.deleted.diff', 'red'],
+  ['variable.other.normal.shell', 'blue'],
+  ['entity.name.command.shell', 'amber'],
+  ['constant.other.table-name.sql', 'teal'],
+  ['constant.character.escape.regexp', 'violet'],
+  ['entity.name.function.decorator.python', 'violet'],
+  ['support.constant.dom.js', 'blue'],
+];
+
 const errors = [];
 function fail(msg) {
   errors.push(msg);
@@ -152,6 +207,62 @@ function contrast(fg, bg) {
 
 function isOpaqueHex(v) {
   return typeof v === 'string' && /^#[0-9A-Fa-f]{6}$/.test(v);
+}
+
+// Role hexes for a variant, read from that variant's own file so no per-file
+// palette is hardcoded here. The bracket sequence doubles as the accent
+// registry (see CLAUDE.md); comment/punct come from their own scopes.
+function roleAnchors(theme) {
+  const c = theme.colors;
+  const exact = (scope) => {
+    const e = theme.tokenColors.find((t) => scopesOf(t).includes(scope));
+    return e && e.settings && e.settings.foreground;
+  };
+  return {
+    orange: c['editorBracketHighlight.foreground1'],
+    amber: c['editorBracketHighlight.foreground2'],
+    blue: c['editorBracketHighlight.foreground3'],
+    teal: c['editorBracketHighlight.foreground4'],
+    violet: c['editorBracketHighlight.foreground5'],
+    copper: c['editorBracketHighlight.foreground6'],
+    green: c['editorGutter.addedBackground'],
+    red: c['editorError.foreground'],
+    text: c['editor.foreground'],
+    comment: exact('comment'),
+    punct: exact('punctuation'),
+  };
+}
+
+// TextMate resolution: the rule whose scope is the longest matching prefix
+// wins; ties go to the later rule. Mirrors how VSCode picks a tokenColors
+// entry for a given scope.
+function resolveScope(theme, scope) {
+  let best = null;
+  theme.tokenColors.forEach((entry, i) => {
+    for (const s of scopesOf(entry)) {
+      if (scope !== s && !scope.startsWith(s + '.')) continue;
+      if (!best || s.length > best.len || (s.length === best.len && i >= best.i)) {
+        best = { len: s.length, i, settings: entry.settings || {} };
+      }
+    }
+  });
+  return best && best.settings.foreground;
+}
+
+// The set of scopes/semantic tokens sharing each foreground, as a comparable
+// signature. Two variants agree when their partitions are identical: the same
+// tokens grouped together, whatever the actual hexes are.
+function rolePartition(theme) {
+  const groups = {};
+  const push = (hex, member) => {
+    const k = (hex || 'NONE').toUpperCase();
+    (groups[k] = groups[k] || []).push(member);
+  };
+  theme.tokenColors.forEach((e, i) => push((e.settings || {}).foreground, `tokenColors[${i}]`));
+  for (const [token, settings] of Object.entries(theme.semanticTokenColors)) {
+    push(typeof settings === 'string' ? settings : settings && settings.foreground, `semantic:${token}`);
+  }
+  return new Set(Object.values(groups).map((m) => m.sort().join(', ')));
 }
 
 // --- Load everything ------------------------------------------------------
@@ -398,6 +509,45 @@ for (const rel of HEX_DOC_FILES) {
   for (const hex of quoted) {
     if (!livePaletteHexes.has(hex)) {
       fail(`${rel}: documents ${hex}, which no theme file uses any more (palette drift)`);
+    }
+  }
+}
+
+// --- 11. Scope coverage -----------------------------------------------------
+
+for (const [name, theme] of Object.entries(themes)) {
+  const R = roleAnchors(theme);
+  for (const [role, hex] of Object.entries(R)) {
+    if (!isOpaqueHex(hex)) fail(`${name}: role anchor "${role}" is ${JSON.stringify(hex)}, expected an opaque hex`);
+  }
+  for (const [scope, role] of SCOPE_FIXTURE) {
+    const got = resolveScope(theme, scope);
+    if (!got) {
+      fail(`${name}: scope "${scope}" matches no tokenColors rule (falls back to the editor default)`);
+    } else if (R[role] && got.toUpperCase() !== R[role].toUpperCase()) {
+      fail(`${name}: scope "${scope}" resolves to ${got}, expected the ${role} role (${R[role]})`);
+    }
+  }
+}
+
+// --- 12. Role partition parity across variants ------------------------------
+// Checks 1-3 prove the four files share a structure; this proves they share a
+// *meaning*. Without it a variant can collapse roles Dark keeps apart — Light
+// and both HC files had merged doc comments, punctuation, operators and
+// parameters into a single gray, flattening Dark's neutral ramp.
+
+const darkPartition = rolePartition(dark);
+for (const [name, theme] of Object.entries(themes)) {
+  if (name === 'dark') continue;
+  const partition = rolePartition(theme);
+  for (const group of darkPartition) {
+    if (!partition.has(group)) {
+      fail(`${name}: dark colors [${group}] as one role, this variant splits or merges them differently`);
+    }
+  }
+  for (const group of partition) {
+    if (!darkPartition.has(group)) {
+      fail(`${name}: colors [${group}] as one role, but dark does not group them that way`);
     }
   }
 }
