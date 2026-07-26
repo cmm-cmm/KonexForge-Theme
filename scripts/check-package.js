@@ -6,12 +6,14 @@
 // made it into a published package. An allowlist fails loudly when something
 // new appears, where a denylist silently ships whatever it forgot to name.
 //
-// Run: node scripts/check-package.js   (CI runs this on every push/PR)
+// Reads the file list on stdin rather than spawning vsce itself, so this stays
+// a pure text check with no process execution:
+//
+//   npx --yes @vscode/vsce ls | node scripts/check-package.js
+//
+// Plain Node, no dependencies.
 
 'use strict';
-
-const { execFileSync } = require('child_process');
-const path = require('path');
 
 const EXPECTED = new Set([
   'package.json',
@@ -25,30 +27,30 @@ const EXPECTED = new Set([
   'themes/konexforge-light-hc-color-theme.json',
 ]);
 
-let out;
-try {
-  out = execFileSync('npx', ['--yes', '@vscode/vsce', 'ls'], {
-    cwd: path.join(__dirname, '..'),
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'inherit'],
-  });
-} catch (e) {
-  console.error(`FATAL: could not list packaged files: ${e.message}`);
-  process.exit(1);
-}
+let input = '';
+process.stdin.setEncoding('utf8');
+process.stdin.on('data', (chunk) => {
+  input += chunk;
+});
+process.stdin.on('end', () => {
+  const actual = new Set(
+    input.split('\n').map((l) => l.trim().replace(/\\/g, '/')).filter(Boolean)
+  );
 
-const actual = new Set(
-  out.split('\n').map((l) => l.trim().replace(/\\/g, '/')).filter(Boolean)
-);
+  if (!actual.size) {
+    console.error('check-package: nothing on stdin — pipe `npx --yes @vscode/vsce ls` into this script');
+    process.exit(1);
+  }
 
-const errors = [];
-for (const f of actual) if (!EXPECTED.has(f)) errors.push(`unexpected file in the VSIX: ${f}`);
-for (const f of EXPECTED) if (!actual.has(f)) errors.push(`missing from the VSIX: ${f}`);
+  const errors = [];
+  for (const f of actual) if (!EXPECTED.has(f)) errors.push(`unexpected file in the VSIX: ${f}`);
+  for (const f of EXPECTED) if (!actual.has(f)) errors.push(`missing from the VSIX: ${f}`);
 
-if (errors.length) {
-  console.error(`check-package: ${errors.length} problem(s):\n`);
-  for (const e of errors) console.error(`  ✗ ${e}`);
-  console.error('\nUpdate .vscodeignore, or EXPECTED in this script if the change is intended.');
-  process.exit(1);
-}
-console.log(`check-package: VSIX contents match the allowlist (${actual.size} files)`);
+  if (errors.length) {
+    console.error(`check-package: ${errors.length} problem(s):\n`);
+    for (const e of errors) console.error(`  ✗ ${e}`);
+    console.error('\nUpdate .vscodeignore, or EXPECTED in this script if the change is intended.');
+    process.exit(1);
+  }
+  console.log(`check-package: VSIX contents match the allowlist (${actual.size} files)`);
+});

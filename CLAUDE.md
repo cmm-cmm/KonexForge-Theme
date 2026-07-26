@@ -63,6 +63,14 @@ via `npx` (no local `node_modules`, no `package-lock.json`).
   Always inspect the "Files included in the VSIX" output — this directory
   also contains an unrelated `.claude/` runtime folder that must stay
   excluded via `.vscodeignore` (it has leaked into a package once before).
+- **Check what would ship** (CI runs this on every push/PR, so the leak
+  above cannot recur silently):
+  ```
+  npx --yes @vscode/vsce ls | node scripts/check-package.js
+  ```
+  It compares the packaged file list against an allowlist in the script —
+  an allowlist, because a denylist silently ships whatever it forgot to
+  name. If a file is added or removed on purpose, update `EXPECTED` there.
 - **Install/reinstall locally for a live check**:
   ```
   code --install-extension konexforge-themes-<version>.vsix --force
