@@ -77,7 +77,7 @@ Installing the extension gives you all four theme variants.
 **From a VSIX file:**
 
 ```
-code --install-extension konexforge-themes-0.8.1.vsix
+code --install-extension konexforge-themes-0.9.0.vsix
 ```
 
 ## Activating the theme

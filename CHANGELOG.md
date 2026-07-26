@@ -4,6 +4,39 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.9.0] - 2026-07-26
+
+### Added
+
+- Coverage pass over the workbench surfaces that were still falling back
+  to VSCode's defaults (+78 `colors` keys per variant, identical key set
+  across all 4, every translucent value pre-blended to a solid hex in the
+  two High Contrast files):
+  - **Notebooks** (`notebook.*`, `notebookStatus*Icon.foreground`) — the
+    whole Jupyter surface was unthemed, so cell borders, the output
+    container, selected/hovered cells and the run-status icons used
+    default colors against a forge background. Focused cell and editor
+    borders are the orange focus accent; success/error/running icons are
+    the green/red/amber role colors.
+  - **Terminal** — shell-integration command decorations
+    (`terminalCommandDecoration.*`, the pass/fail dots in the gutter) now
+    use the green/red/muted roles instead of VSCode's stock blue-red;
+    plus `terminal.border`, find-match highlighting and sticky scroll.
+  - **Diff editor** — the collapsed unchanged regions introduced with the
+    new diff view (`diffEditor.unchangedRegion*`, `unchangedCodeBackground`,
+    `diagonalFill`).
+  - **Chat / inline chat** (`chat.*`, `inlineChat*`) and **Source Control
+    Graph** (`scmGraph.*` ref colors, `scm.historyItem*`).
+  - Assorted gaps: `list.filterMatch*`/`deemphasizedForeground`/
+    `dropBackground`, `menubar.selection*`, `peekViewResult.file`/
+    `lineForeground`, `window.active`/`inactiveBorder`,
+    `statusBarItem.hoverForeground`/`focusBorder`/`prominent*`,
+    `tab.dragAndDropBorder`/`lastPinnedBorder`/`unfocusedActiveForeground`,
+    `editor.hoverHighlightBackground`/`symbolHighlightBackground`,
+    `search.resultsInfoForeground`, `editorSuggestWidget.focusHighlightForeground`,
+    `gitDecoration.stage*`, `profileBadge.*`, `ports.iconRunningProcessForeground`,
+    `editorWatermark.foreground`.
+
 ## [0.8.1] - 2026-07-26
 
 ### Fixed

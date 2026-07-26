@@ -154,7 +154,12 @@ roles: classes teal, functions amber, constants/properties steel blue,
 keywords orange, strings green), debug (icons, stack-frame highlights,
 `debugTokenExpression.*`), `testing.icon*`, `charts.*`,
 `inputValidation.*` (solid pre-blended backgrounds in every variant),
-keybinding labels, merge headers, minimap error/warning, and marker
+keybinding labels, merge headers, minimap error/warning, notebooks
+(`notebook.*` cell borders/backgrounds and `notebookStatus*Icon`
+green/red/amber), terminal shell-integration decorations
+(`terminalCommandDecoration.*`) and sticky scroll, the diff editor's
+collapsed unchanged regions, chat/inline-chat surfaces, `scmGraph.*`
+ref colors, `profileBadge.*`, `menubar.selection*`, and marker
 navigation. All of these reuse the role hexes above — when adding a
 new UI key, pick the role color, don't invent a new hex.
 
