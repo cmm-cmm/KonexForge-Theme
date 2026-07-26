@@ -32,8 +32,30 @@ via `npx` (no local `node_modules`, no `package-lock.json`).
   key parity across the 4 files (with the documented HC-only allowlist),
   identical `tokenColors`/`semanticTokenColors` structure, the italic
   allowlist in Dark/Light, no italics and no alpha channels in HC, the
-  bracket color sequence, valid hex everywhere, and that the theme paths
-  in `package.json` exist.
+  bracket color sequence, valid hex everywhere, that the theme paths
+  in `package.json` exist, WCAG contrast (AA in Dark/Light, AAA in HC),
+  and that README/CLAUDE.md quote no hex the themes have dropped.
+  Two checks go past structure into meaning, and both exist because the
+  bug they catch had already shipped:
+  - **Scope coverage** — a fixture of real-world scopes (`SCOPE_FIXTURE`),
+    each pinned to the role it must resolve to, run through the same
+    longest-prefix-wins lookup VSCode uses. Catches a scope silently
+    falling through to the editor default, or landing in the wrong role
+    family. When you add a language rule, add its scope here too.
+  - **Role partition parity** — groups scopes by shared foreground in each
+    file and requires all four groupings to be identical. Checks 1-3 prove
+    the files share a *structure*; this proves they share a *meaning*, so a
+    variant cannot merge two roles Dark keeps apart.
+- **Regenerate the previews** (after any palette change — the README images
+  are rendered from the theme files, so a stale one is a visible lie):
+  ```
+  node scripts/render-preview.js
+  npx --yes @resvg/resvg-js-cli --fit-width 980 images/preview-dark.svg images/preview-dark.png
+  ```
+  Repeat the rasterize step for `light`, `dark-hc`, `light-hc`. The SVG is
+  the source; the PNG is what README and the Marketplace embed (the
+  Marketplace blocks SVG and needs absolute `raw.githubusercontent.com`
+  URLs, which is why README links there rather than using relative paths).
 - **Package into a .vsix**:
   ```
   npx --yes @vscode/vsce package --no-git-tag-version --no-update-package-json
@@ -116,6 +138,27 @@ read as vividly as the orange/amber heroes (not washed-out pastels) —
 when re-deriving a variant's hex for one of these roles, boost saturation
 to match, don't just lighten/darken the existing value.
 
+Between the comment color and the primary text there is a **four-step
+neutral ramp**, and every variant must have all four steps — Light and
+both HC files once collapsed them into a single gray, which made doc
+comments, punctuation, operators and function parameters indistinguishable
+(validator check 12 exists to stop that recurring):
+
+| Step | Dark | Used for |
+|---|---|---|
+| comment | `#7C8494` | `comment`, `meta.separator` |
+| doc comment | `#8891A3` | `comment.block.documentation` |
+| punctuation | `#ABB3C0` | `punctuation`, `keyword.operator`, `storage.type.function.arrow`, semantic `operator` |
+| parameter | `#C9CDD6` | `variable.parameter`, semantic `parameter` |
+| text | `#E4E1DC` | everything unstyled |
+
+When re-deriving the ramp for another variant, place the three middle
+steps at the same *luminance fractions* along that variant's own
+comment→text range (0.10 / 0.41 / 0.72) rather than picking values by eye.
+Because both endpoints already clear their contrast threshold and
+luminance moves monotonically between them, every intermediate step clears
+it too.
+
 Language-coverage rules (tuned for JS/TS/JSX/TSX, C/C++, PHP, Python,
 C#, and validated by simulating TextMate prefix matching):
 `variable.language` (`this`, `self`, `super`, `$this`) is **copper
@@ -132,6 +175,39 @@ join the violet decorator set, and C# `$"{x}"` interpolation braces +
 Python f-string placeholders join the violet template-`${}` rule.
 `storage.type.function.arrow` (the JS/TS `=>`) is demoted to operator
 gray — arrow functions are too frequent in modern JS for rust-orange.
+TypeScript's `support.type.primitive` (and the generic `support.type`)
+is slate teal, completing the built-in-type rule the C/C++ and C# entries
+already had. Object and struct members (`variable.other.member`,
+`variable.other.property`) plus unquoted object-literal keys
+(`meta.object-literal.key`) are steel blue, matching the semantic
+`property` role — without them a plain JS file with no language server
+loses the distinction entirely. Java/Kotlin annotations
+(`storage.type.annotation`) are **violet**, not `storage.type` rust:
+`@Override` is the same kind of token as a Python or TypeScript
+decorator and belongs in the same family. Rust lifetimes
+(`storage.modifier.lifetime`, `entity.name.lifetime`) are copper with
+`variable.language`; namespaces/packages/modules (`entity.name.namespace`)
+are violet, matching the semantic `namespace`; `entity.name.label` is
+copper, matching the semantic `label`.
+
+**CSS/SCSS/LESS** needs its own carve-out because the generic rules land
+badly there. Class, id and pseudo-class selectors
+(`entity.other.attribute-name.class.css` and siblings) are **amber with
+`fontStyle` explicitly cleared** — they otherwise inherit the steel-blue
+italic meant for HTML attribute names, and a selector is not part of the
+annotation layer. Units (`keyword.other.unit`) are steel blue, not the
+italic orange they'd inherit from `keyword`; color literals
+(`constant.other.color`) and SCSS/LESS variables (`variable.scss`,
+`variable.other.less`, `variable.css`) are steel blue too. Property names
+keep their existing `support.type.property-name` steel blue — the generic
+`support.type` teal must never win over it.
+
+**Markdown** structure: list bullets
+(`punctuation.definition.list.begin`) are amber, the fence's language tag
+(`fenced_code.block.language`) is teal, `meta.separator` (the `---` rule)
+is comment-muted, and `markup.list` / `markup.fenced_code` are pinned to
+the primary text color so block content is never left at the editor
+default.
 
 Auxiliary-format rules (same role logic): **YAML mapping keys**
 (`entity.name.tag.yaml`) are steel blue, overriding the orange
@@ -160,8 +236,21 @@ green/red/amber), terminal shell-integration decorations
 (`terminalCommandDecoration.*`) and sticky scroll, the diff editor's
 collapsed unchanged regions, chat/inline-chat surfaces, `scmGraph.*`
 ref colors, `profileBadge.*`, `menubar.selection*`, and marker
-navigation. All of these reuse the role hexes above — when adding a
-new UI key, pick the role color, don't invent a new hex.
+navigation. Also themed: the debug console
+(`debugConsole.*`, `debugExceptionWidget.*`, `debugView.*`), the
+three-way merge editor (`mergeEditor.*` — green for incoming change, red
+for the base, amber/orange borders for unhandled conflicts and green for
+handled), comment threads (`commentsView.*`, `editorCommentsWidget.*`,
+`editorGutter.comment*`), `multiDiffEditor.*`, and the testing surface's
+peek/message/coverage keys. All of these reuse the role hexes above —
+when adding a new UI key, pick the role color, don't invent a new hex.
+
+Five **root-level fallback keys** carry the rest of the workbench:
+`foreground`, `descriptionForeground`, `errorForeground`,
+`disabledForeground` and `selection.background` (alongside `focusBorder`).
+VSCode falls back to these for every surface a theme doesn't name, so they
+cover the long tail of widgets without enumerating each one — set them
+before reaching for a new specific key.
 
 **Markup/template files (HTML, JSX, Blade, Vue, etc.)** get their own
 break from the orange/amber family, since a typical line there (a tag,

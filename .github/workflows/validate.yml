@@ -13,3 +13,28 @@ jobs:
         with:
           node-version: lts/*
       - run: node scripts/validate-themes.js
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Assert the VSIX ships exactly the expected files
+        run: node scripts/check-package.js
+
+  previews:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Previews must match the current theme files
+        run: |
+          node scripts/render-preview.js
+          git diff --exit-code -- images/ || {
+            echo "::error::images/preview-*.svg are stale — run node scripts/render-preview.js, then re-rasterize the PNGs"
+            exit 1
+          }
