@@ -64,7 +64,20 @@ const ITALIC_SEMANTIC_TOKENS = new Set([
   '*.defaultLibrary',
 ]);
 
-const BRACKET_SEQUENCE = ['#FF7A33', '#F5A623', '#47A8E1', '#26C5B5', '#9367E6', '#C97B4A'];
+const BRACKET_SEQUENCE = ['#FF7A33', '#F5A623', '#5DA7D5', '#53C1B3', '#906FD5', '#C97B4A'];
+
+// --- Role budget policy -----------------------------------------------------
+// The palette drifted cool across 0.7.0-1.0.0 without any check noticing:
+// steel blue quietly absorbed properties, object keys, CSS values and shell
+// variables until it carried more scopes than orange and amber combined, and
+// the warm share of the syntax palette fell from 50% to 34%. Structure checks
+// cannot see that — every file agreed with every other file, they were just
+// all drifting together. These two numbers are the guard.
+const WARM_ROLES = new Set(['orange', 'amber', 'copper', 'red']);
+const MIN_WARM_SHARE = 0.4;
+// No single role may dominate: a role that swallows unrelated concepts is how
+// the drift happened in the first place.
+const MAX_ROLE_SHARE = 0.25;
 
 const HEX_RE = /^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
 
@@ -127,14 +140,22 @@ const SCOPE_FIXTURE = [
   ['entity.name.type.class.python', 'teal'],
   ['entity.name.function.python', 'amber'],
   ['keyword.control.flow.python', 'orange'],
+  // `storage` shares the hero orange with `keyword` — italic is what keeps
+  // `if` apart from `const`, not hue. Pinned so the two never drift into two
+  // near-identical oranges again.
+  ['storage.type.js', 'orange'],
   ['variable.language.this.js', 'copper'],
   // CSS/SCSS: selectors are not the HTML annotation layer, units are not
   // keywords, and hex color values must not fall through to the default.
   ['entity.other.attribute-name.class.css', 'amber'],
-  ['keyword.other.unit.px.css', 'blue'],
+  ['keyword.other.unit.px.css', 'copper'],
   ['constant.other.color.rgb-value.hex.css', 'blue'],
-  ['variable.scss', 'blue'],
-  ['support.type.property-name.css', 'blue'],
+  ['variable.scss', 'copper'],
+  ['support.type.property-name.css', 'copper'],
+  // ...but the same scope covers JSON keys, which must stay blue. Moving
+  // `support.type.property-name` wholesale would turn every .json file into a
+  // wall of copper — the mistake 1.1.0 fixed, in a different hue.
+  ['support.type.property-name.json', 'blue'],
   // HTML keeps the steel-blue attribute name / teal attribute value split.
   ['entity.other.attribute-name.id.html', 'blue'],
   ['string.quoted.double.html', 'teal'],
@@ -142,8 +163,8 @@ const SCOPE_FIXTURE = [
   ['support.type.primitive.ts', 'teal'],
   ['keyword.type.cs', 'teal'],
   ['storage.type.built-in.c', 'teal'],
-  ['meta.object-literal.key.js', 'blue'],
-  ['variable.other.member.cpp', 'blue'],
+  ['meta.object-literal.key.js', 'copper'],
+  ['variable.other.member.cpp', 'copper'],
   ['storage.type.function.arrow.js', 'punct'],
   // Markdown structure.
   ['punctuation.definition.list.begin.markdown', 'amber'],
@@ -157,7 +178,7 @@ const SCOPE_FIXTURE = [
   ['entity.name.tag.yaml', 'blue'],
   ['markup.inserted.diff', 'green'],
   ['markup.deleted.diff', 'red'],
-  ['variable.other.normal.shell', 'blue'],
+  ['variable.other.normal.shell', 'copper'],
   ['entity.name.command.shell', 'amber'],
   ['constant.other.table-name.sql', 'teal'],
   ['constant.character.escape.regexp', 'violet'],
@@ -548,6 +569,54 @@ for (const [name, theme] of Object.entries(themes)) {
   for (const group of partition) {
     if (!darkPartition.has(group)) {
       fail(`${name}: colors [${group}] as one role, but dark does not group them that way`);
+    }
+  }
+}
+
+// --- 13. Role budget --------------------------------------------------------
+// Checks 11-12 pin individual scopes and prove the variants agree with each
+// other; neither notices the palette as a whole sliding cool, because a slide
+// that happens in all four files at once is perfectly consistent. This counts
+// scopes per accent role and holds the balance the "Forge" identity rests on.
+// Neutrals (the comment->text ramp) sit outside the denominator: they are the
+// page, not the palette.
+
+for (const [name, theme] of Object.entries(themes)) {
+  const R = roleAnchors(theme);
+  const roleOf = {};
+  for (const role of [...WARM_ROLES, 'blue', 'teal', 'violet', 'green']) {
+    if (isOpaqueHex(R[role])) roleOf[R[role].toUpperCase()] = role;
+  }
+
+  const perRole = {};
+  let colored = 0;
+  for (const entry of theme.tokenColors) {
+    const fg = (entry.settings || {}).foreground;
+    if (!isOpaqueHex(fg)) continue;
+    const role = roleOf[fg.toUpperCase()];
+    if (!role) continue; // neutral ramp, or a rule painting its own background
+    const n = scopesOf(entry).length;
+    perRole[role] = (perRole[role] || 0) + n;
+    colored += n;
+  }
+  if (!colored) {
+    fail(`${name}: no tokenColors scope resolves to an accent role`);
+    continue;
+  }
+
+  const warm = [...WARM_ROLES].reduce((sum, role) => sum + (perRole[role] || 0), 0);
+  if (warm / colored < MIN_WARM_SHARE) {
+    fail(
+      `${name}: warm roles cover ${(warm / colored * 100).toFixed(1)}% of the ` +
+        `${colored} accent-coloured scopes, below ${MIN_WARM_SHARE * 100}% — the palette is drifting cool`
+    );
+  }
+  for (const [role, n] of Object.entries(perRole)) {
+    if (n / colored > MAX_ROLE_SHARE) {
+      fail(
+        `${name}: the ${role} role covers ${n}/${colored} scopes ` +
+          `(${(n / colored * 100).toFixed(1)}%), above ${MAX_ROLE_SHARE * 100}% — it is absorbing unrelated concepts`
+      );
     }
   }
 }

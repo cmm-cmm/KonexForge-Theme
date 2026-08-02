@@ -4,6 +4,53 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.0] - 2026-08-02
+
+The palette had been drifting cool for several releases without anything
+catching it. Measured on the Dark theme, warm roles covered 50% of the
+colored syntax scopes at 0.1.0 and only 34% at 1.0.0, while steel blue grew
+to carry more scopes than orange and amber combined. Every structural check
+passed the whole way, because all four variants drifted together. This
+release reverses the drift and adds the measurement that would have caught
+it.
+
+### Changed
+
+- **`storage` (`const`, `let`, `class`, `function`, `public`) now shares the
+  primary orange with `keyword`**, instead of having its own near-identical
+  rust hex. Two slightly different oranges read as one muddy color rather
+  than a hero; italic already distinguishes them (`keyword` is italic,
+  `storage` is not). In a typical TypeScript file this consolidates ~20% of
+  all glyphs onto a single accent.
+- **Steel blue is back to carrying literals only.** Properties and members,
+  object-literal keys, CSS property names, units (`px`/`rem`), SCSS/LESS
+  variables, and shell/Ruby variables moved to copper, which is now the
+  "member/slot" role alongside `this`/`self` (kept distinct by its bold
+  weight). Numbers, booleans, `null`, constants, enum members, color
+  literals, JSON/YAML keys and HTML attribute names stay steel blue.
+  Property access is the densest token in ordinary JS/TS, so parking it on a
+  cool hue was most of what made the theme stop looking warm.
+- **The four cool accents sit ~18% lower in chroma in Dark and Light**, at
+  the same hue and lightness, establishing a hero/support hierarchy instead
+  of every color shouting at once. This reverses the 0.4.0 decision to boost
+  them until they read as vividly as orange and amber. **Both High Contrast
+  variants keep full chroma** — HC exists to maximise distinguishability for
+  low-vision users, the same reasoning that made HC drop italics.
+- Net effect: warm roles now cover 48.4% of colored syntax scopes in all four
+  variants, and no single role exceeds 21%. In the rendered CSS preview,
+  steel blue fell from 51% of glyphs to 17%.
+
+### Added
+
+- **Validator check 13 — role budget.** Counts accent-colored scopes per role
+  and requires warm (orange/amber/copper/red) ≥ 40% with no single role above
+  25%. Checks 11 and 12 pin individual scopes and prove the variants agree
+  with each other; neither can see the palette as a whole sliding, which is
+  what happened here. Verified to fail on the 1.0.0 palette.
+- A narrow `support.type.property-name.css`/`.scss`/`.less` rule, so CSS
+  property names can be copper while the generic scope — which also covers
+  JSON keys — stays steel blue. Both halves are pinned by fixture entries.
+
 ## [1.0.0] - 2026-07-26
 
 ### Fixed

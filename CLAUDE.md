@@ -35,8 +35,8 @@ via `npx` (no local `node_modules`, no `package-lock.json`).
   bracket color sequence, valid hex everywhere, that the theme paths
   in `package.json` exist, WCAG contrast (AA in Dark/Light, AAA in HC),
   and that README/CLAUDE.md quote no hex the themes have dropped.
-  Two checks go past structure into meaning, and both exist because the
-  bug they catch had already shipped:
+  Three checks go past structure into meaning, and all three exist because
+  the bug they catch had already shipped:
   - **Scope coverage** — a fixture of real-world scopes (`SCOPE_FIXTURE`),
     each pinned to the role it must resolve to, run through the same
     longest-prefix-wins lookup VSCode uses. Catches a scope silently
@@ -46,6 +46,12 @@ via `npx` (no local `node_modules`, no `package-lock.json`).
     file and requires all four groupings to be identical. Checks 1-3 prove
     the files share a *structure*; this proves they share a *meaning*, so a
     variant cannot merge two roles Dark keeps apart.
+  - **Role budget** — counts accent-colored scopes per role and requires
+    warm (orange/amber/copper/red) ≥ 40% with no single role above 25%.
+    The two checks above are blind to a drift that happens in all four
+    files at once, which is exactly how the palette slid from 50% warm to
+    34% between 0.1.0 and 1.0.0. If this check fails, the fix is to find
+    which role is hoarding concepts — not to widen the threshold.
 - **Regenerate the previews** (after any palette change — the README images
   are rendered from the theme files, so a stale one is a visible lie):
   ```
@@ -115,15 +121,21 @@ The design language is: cool charcoal-slate backgrounds (blue-gray
 undertone, never pure neutral gray/black) + hot orange/amber/copper/rust
 accents, balanced by four cool counterpoint hues (steel blue, slate teal,
 violet, green) so syntax categories stay visually distinct. The warm
-family is deliberately limited to the "action" tokens — keywords, tags,
-storage, functions/methods, and macros — while the "data" tokens are
-cool: **strings are green**, **numbers and constants (true/false/null,
+family covers the "action" tokens — keywords, tags, storage,
+functions/methods, macros — plus, in copper, the "member/slot" tokens
+that name a place rather than hold a value (`this`, `.property`, object
+and CSS property keys). The **literal** tokens stay cool: **strings are
+green**, **numbers and constants (true/false/null,
 `variable.other.constant`, `enumMember`) are steel blue**, types/classes
 are slate teal, and decorators/regex/escape-chars/template-`${}` are
-violet. Don't move a data token back into the warm family — an earlier
+violet. Don't move a *literal* back into the warm family — an earlier
 iteration had strings/numbers/constants all amber, and every line of
-ordinary code rendered as a wall of orange. Key tokens (reuse these
-hexes, don't invent new ones for the same role):
+ordinary code rendered as a wall of orange. The opposite failure is just
+as real and happened later: by 1.0.0 steel blue had crept over members,
+keys and CSS values until only 34% of colored scopes were warm and the
+theme no longer read as a warm theme at all. Both edges are now measured
+(check 13). Key tokens (reuse these hexes, don't invent new ones for the
+same role):
 
 | Role | Hex |
 |---|---|
@@ -136,15 +148,33 @@ hexes, don't invent new ones for the same role):
 | Secondary accent (amber) | `#F5A623` |
 | Tertiary accent (copper) | `#C97B4A` |
 | Error (ember red) | `#E5484D` |
-| Numbers/constants/info (steel blue) | `#47A8E1` |
-| Types/classes (slate teal) | `#26C5B5` |
-| Decorators/regex/escapes (violet) | `#9367E6` |
-| Strings + success/added (green) | `#4BD26D` |
+| Numbers/constants/info (steel blue) | `#5DA7D5` |
+| Types/classes (slate teal) | `#53C1B3` |
+| Decorators/regex/escapes (violet) | `#906FD5` |
+| Strings + success/added (green) | `#67CD7C` |
 
-Steel blue, slate teal, violet, and green are deliberately saturated to
-read as vividly as the orange/amber heroes (not washed-out pastels) —
-when re-deriving a variant's hex for one of these roles, boost saturation
-to match, don't just lighten/darken the existing value.
+The warm accents are the heroes and the four cool accents are support:
+in Dark and Light the cool four sit at ~82% of the chroma they'd otherwise
+have (same hue, same lightness), so orange and amber are the loudest
+colors on screen. This **reverses** the 0.4.0 decision to boost the cool
+accents until they read as vividly as the heroes — with no chroma
+hierarchy, every color shouted at once and the theme stopped looking like
+a warm theme. When re-deriving one of these for a variant, work in OKLCH:
+keep hue, scale chroma, and only move lightness if the contrast floor
+needs it. **Both HC files keep full chroma** — HC exists to maximise
+distinguishability for low-vision users, and washing out its hues works
+against that, the same reasoning that made HC drop italics.
+
+**Role budget.** Warm roles (orange, amber, copper, red) must cover at
+least 40% of the accent-colored `tokenColors` scopes, and no single role
+may exceed 25%. Validator check 13 enforces both. This exists because the
+palette drifted from 50% warm at 0.1.0 to 34% at 1.0.0 with every
+structural check passing the whole way: steel blue kept absorbing new
+concepts (properties, object keys, CSS values, shell variables) until it
+carried more scopes than orange and amber combined, and a drift that
+happens in all four files at once is perfectly consistent. Before adding
+a rule, ask which existing role it belongs to — if the answer is "blue,
+like everything else", that's the smell.
 
 Between the comment color and the primary text there is a **four-step
 neutral ramp**, and every variant must have all four steps — Light and
@@ -169,10 +199,25 @@ it too.
 
 Language-coverage rules (tuned for JS/TS/JSX/TSX, C/C++, PHP, Python,
 C#, and validated by simulating TextMate prefix matching):
-`variable.language` (`this`, `self`, `super`, `$this`) is **copper
-bold** — copper's dedicated token role now that constants moved to
-steel blue; the Pylance semantic tokens `selfParameter`/`clsParameter`
-match it. Built-in primitive types (`storage.type.built-in` for C/C++,
+`storage`/`storage.type`/`storage.modifier` (`const`, `let`, `class`,
+`function`, `public`) share the **primary orange** with `keyword` — they
+used to have their own rust hex, but two near-identical oranges read as
+one muddy color rather than a hero, and italic already separates them
+(`keyword` is italic, `storage` is not). Don't reintroduce a second
+orange.
+
+Copper is the **member/slot** role: `variable.language` (`this`, `self`,
+`super`, `$this`) is copper **bold**, and copper regular covers object
+and struct members (`variable.other.member`, `variable.other.property`),
+unquoted object-literal keys (`meta.object-literal.key`, matching the
+semantic `property` role), shell `$VAR` and Ruby `@var`, plus the CSS
+entries below. Bold is what keeps `this` apart from `.property`. These
+moved off steel blue in 1.1.0: property access is the densest token in
+ordinary JS/TS, so parking it on a cool hue is most of what made the
+theme stop looking warm. The Pylance semantic tokens
+`selfParameter`/`clsParameter` match `variable.language`.
+
+Built-in primitive types (`storage.type.built-in` for C/C++,
 `keyword.type` for C#) are slate teal like all other types — without
 this rule C#'s `int`/`string` would inherit the italic-orange keyword
 style. `support.constant`/`support.variable` (built-in objects and
@@ -182,15 +227,11 @@ semantic `builtinConstant` are steel blue. Python decorators
 join the violet decorator set, and C# `$"{x}"` interpolation braces +
 Python f-string placeholders join the violet template-`${}` rule.
 `storage.type.function.arrow` (the JS/TS `=>`) is demoted to operator
-gray — arrow functions are too frequent in modern JS for rust-orange.
+gray — arrow functions are too frequent in modern JS for the hero orange.
 TypeScript's `support.type.primitive` (and the generic `support.type`)
 is slate teal, completing the built-in-type rule the C/C++ and C# entries
-already had. Object and struct members (`variable.other.member`,
-`variable.other.property`) plus unquoted object-literal keys
-(`meta.object-literal.key`) are steel blue, matching the semantic
-`property` role — without them a plain JS file with no language server
-loses the distinction entirely. Java/Kotlin annotations
-(`storage.type.annotation`) are **violet**, not `storage.type` rust:
+already had. Java/Kotlin annotations
+(`storage.type.annotation`) are **violet**, not `storage.type` orange:
 `@Override` is the same kind of token as a Python or TypeScript
 decorator and belongs in the same family. Rust lifetimes
 (`storage.modifier.lifetime`, `entity.name.lifetime`) are copper with
@@ -203,12 +244,18 @@ badly there. Class, id and pseudo-class selectors
 (`entity.other.attribute-name.class.css` and siblings) are **amber with
 `fontStyle` explicitly cleared** — they otherwise inherit the steel-blue
 italic meant for HTML attribute names, and a selector is not part of the
-annotation layer. Units (`keyword.other.unit`) are steel blue, not the
-italic orange they'd inherit from `keyword`; color literals
-(`constant.other.color`) and SCSS/LESS variables (`variable.scss`,
-`variable.other.less`, `variable.css`) are steel blue too. Property names
-keep their existing `support.type.property-name` steel blue — the generic
-`support.type` teal must never win over it.
+annotation layer. Units (`keyword.other.unit`) are copper, not the italic
+orange they'd inherit from `keyword` — a unit is the warm suffix on a
+steel-blue number. SCSS/LESS variables (`variable.scss`,
+`variable.other.less`, `variable.css`) are copper as well, being
+variables rather than literals; color literals (`constant.other.color`)
+stay steel blue, being literals. Property names are copper via a
+**narrow** `support.type.property-name.css`/`.scss`/`.less` rule, and
+the generic `support.type.property-name` **must stay steel blue** — that
+same scope covers JSON keys, so moving it wholesale turns every `.json`
+file into a wall of copper, which is the exact mistake 1.1.0 set out to
+fix, only in a different hue. Fixture entries pin both halves. The
+generic `support.type` teal must never win over either.
 
 **Markdown** structure: list bullets
 (`punctuation.definition.list.begin`) are amber, the fence's language tag
@@ -223,7 +270,8 @@ Auxiliary-format rules (same role logic): **YAML mapping keys**
 orange wall. Diff/patch content maps to the git colors
 (`markup.inserted` green, `markup.deleted` red, `markup.changed`
 amber, `meta.diff.header` steel blue, `meta.diff.range` violet).
-Shell `$VAR` / Ruby `@var` are steel blue; `entity.name.command.shell`
+Shell `$VAR` / Ruby `@var` are copper with the member/slot
+family; `entity.name.command.shell`
 is amber like other callables. Regex internals (char classes,
 quantifiers) stay in the violet family with the rest of the regex.
 SQL table/database names are teal; `constant.other.enum` is steel

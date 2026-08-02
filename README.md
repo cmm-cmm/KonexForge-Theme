@@ -27,23 +27,26 @@ These previews are generated from the theme files themselves
 (`node scripts/render-preview.js`), resolving each token through the same
 scope lookup VSCode uses — so they can't drift from the actual themes.
 
-The warm accents are reserved for the "action" parts of code — keywords,
-tags, storage modifiers, function and method names, macros. The
-high-frequency "data" parts are cool, so an ordinary line of code doesn't
-turn into a wall of orange:
+The warm accents carry the "action" parts of code — keywords, tags, storage,
+function and method names — plus, in copper, the parts that name a place
+rather than hold a value. The *literals* are cool, so an ordinary line of
+code doesn't turn into a wall of orange:
 
 | You'll see | In |
 |---|---|
-| Keywords, tags, storage, `this`/`self` | orange / amber / copper |
+| Keywords, storage, tags | orange |
+| Functions, methods, CSS selectors | amber |
+| `this`/`self`, properties and members, CSS property names, units | copper |
 | Strings | green |
-| Numbers, constants, built-ins, YAML keys | steel blue |
+| Numbers, constants, JSON/YAML keys, HTML attribute names | steel blue |
 | Types, classes, HTML attribute values | slate teal |
 | Decorators, annotations, regex, escapes, `${...}` | violet |
 | Comments | muted blue-gray, italic (Dark/Light only) |
 
 So `<div class="row">` reads orange tag → steel-blue attribute name →
-slate-teal value, and `const n = 42` reads orange keyword → plain text →
-steel-blue number.
+slate-teal value, `const n = 42` reads orange keyword → plain text →
+steel-blue number, and `padding: 12px` reads copper property → steel-blue
+number → copper unit.
 
 Between comments and body text sits a four-step neutral ramp — doc comments,
 punctuation, operators and parameters each get their own weight, in all four
@@ -58,7 +61,7 @@ variants — so structure stays readable without pulling colour into it.
 | **KonexForge Dark High Contrast** | Low-vision users, maximum boundary/contrast clarity in a dark environment |
 | **KonexForge Light High Contrast** | Low-vision users in bright environments, accessibility-mandated setups, high-glare use |
 
-All four share the same "hot metal" hue language (orange/amber/copper/rust
+All four share the same "hot metal" hue language (orange/amber/copper
 accents, steel-blue/slate-teal/violet cool counterpoints) re-derived per
 variant for contrast, so they read as one recognizable family everywhere
 you use them.
@@ -67,9 +70,10 @@ you use them.
 
 - Four variants sharing one hue language — Dark, Light, Dark High Contrast,
   Light High Contrast — installed together from a single extension.
-- A "hot metal" accent system (orange / amber / copper / rust) as the
-  visual hero, balanced by cool counterpoint hues (steel blue, slate teal,
-  violet) so syntax categories stay easy to tell apart.
+- A "hot metal" accent system (orange / amber / copper) as the visual
+  hero, balanced by cool counterpoint hues (steel blue, slate teal,
+  violet, green) held a step lower in chroma so they support the heroes
+  instead of competing with them.
 - Full workbench theming: activity bar, status bar, tabs, terminal
   (16-color ANSI palette), git decorations, diff editor, notebooks, debug
   console, three-way merge editor, testing and coverage, notifications,
@@ -86,9 +90,11 @@ you use them.
   High Contrast variants drop italics entirely for maximum legibility.
 - Every syntax color meets WCAG AA (4.5:1) against its background in
   Dark/Light and AAA (7:1) in both High Contrast variants — enforced
-  automatically on every commit, not just eyeballed. The same check
+  automatically on every commit, not just eyeballed. The same suite
   guarantees the four variants keep identical *roles*, not just identical
-  keys, so no variant quietly flattens a distinction the others make.
+  keys, so no variant quietly flattens a distinction the others make — and
+  measures the warm/cool balance of the palette itself, so the theme can't
+  drift away from being a warm theme one rule at a time.
 
 ## Installation
 
@@ -104,7 +110,7 @@ Installing the extension gives you all four theme variants.
 **From a VSIX file:**
 
 ```
-code --install-extension konexforge-themes-1.0.0.vsix
+code --install-extension konexforge-themes-1.1.0.vsix
 ```
 
 ## Activating the theme
@@ -128,12 +134,19 @@ palette:
 | Muted text | `#7C8494` | comments, CodeLens, ghost text |
 | Primary accent (orange) | `#FF7A33` | keywords, tags, storage |
 | Secondary accent (amber) | `#F5A623` | functions, methods, macros |
-| Tertiary accent (copper) | `#C97B4A` | `this` / `self` / `$this` |
-| Info accent (steel blue) | `#47A8E1` | numbers, constants, attribute names |
-| Type accent (slate teal) | `#26C5B5` | types, classes, attribute values |
-| Decorator accent (violet) | `#9367E6` | decorators, regex, escapes |
-| Success accent (green) | `#4BD26D` | strings, git added, diff inserted |
+| Tertiary accent (copper) | `#C97B4A` | `this` / `self`, properties and members, CSS property names, units |
+| Info accent (steel blue) | `#5DA7D5` | numbers, constants, JSON keys, HTML attribute names |
+| Type accent (slate teal) | `#53C1B3` | types, classes, attribute values |
+| Decorator accent (violet) | `#906FD5` | decorators, regex, escapes |
+| Success accent (green) | `#67CD7C` | strings, git added, diff inserted |
 | Error accent (ember red) | `#E5484D` | errors, git deleted |
+
+The two warm accents are the loudest colors on screen on purpose: orange and
+amber carry the code's skeleton and its actions, and the four cool accents sit
+a step lower in chroma so they read as support rather than competing for
+attention. Roughly half of all colored syntax scopes are warm — the validator
+enforces that balance, because the palette had drifted cool once before
+without anyone noticing.
 
 Light and both High Contrast variants re-derive lightness per variant from
 these same hue identities — deeper on the warm parchment background of
