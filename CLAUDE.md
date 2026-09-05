@@ -35,7 +35,7 @@ via `npx` (no local `node_modules`, no `package-lock.json`).
   bracket color sequence, valid hex everywhere, that the theme paths
   in `package.json` exist, WCAG contrast (AA in Dark/Light, AAA in HC),
   and that README/CLAUDE.md quote no hex the themes have dropped.
-  Three checks go past structure into meaning, and all three exist because
+  Four checks go past structure into meaning, and all four exist because
   the bug they catch had already shipped:
   - **Scope coverage** — a fixture of real-world scopes (`SCOPE_FIXTURE`),
     each pinned to the role it must resolve to, run through the same
@@ -52,6 +52,14 @@ via `npx` (no local `node_modules`, no `package-lock.json`).
     files at once, which is exactly how the palette slid from 50% warm to
     34% between 0.1.0 and 1.0.0. If this check fails, the fix is to find
     which role is hoarding concepts — not to widen the threshold.
+  - **Per-language balance** — resolves a hand-weighted corpus of real token
+    mixes (`LANG_CORPUS`: TS, SCSS, Python, JSON, YAML, Markdown, HTML) and
+    requires each language to land between 12% and 65% warm with no hue
+    family above 70%. Check 13 measures the palette as a whole and cannot
+    see a single *file type* collapsing into one temperature — at 1.1.0 an
+    `.scss` file was 77% warm across two families while `.json` and `.yaml`
+    contained no warm token at all. Add a language here when you add rules
+    for one.
 - **Regenerate the previews** (after any palette change — the README images
   are rendered from the theme files, so a stale one is a visible lie):
   ```
@@ -118,13 +126,13 @@ copy-pasting the Dark value. Each file has three sections:
 ### The "Forge" palette
 
 The design language is: cool charcoal-slate backgrounds (blue-gray
-undertone, never pure neutral gray/black) + hot orange/amber/copper/rust
+undertone, never pure neutral gray/black) + hot orange/amber/copper
 accents, balanced by four cool counterpoint hues (steel blue, slate teal,
 violet, green) so syntax categories stay visually distinct. The warm
 family covers the "action" tokens — keywords, tags, storage,
 functions/methods, macros — plus, in copper, the "member/slot" tokens
 that name a place rather than hold a value (`this`, `.property`, object
-and CSS property keys). The **literal** tokens stay cool: **strings are
+and config keys), and in rose the operators. The **literal** tokens stay cool: **strings are
 green**, **numbers and constants (true/false/null,
 `variable.other.constant`, `enumMember`) are steel blue**, types/classes
 are slate teal, and decorators/regex/escape-chars/template-`${}` are
@@ -134,7 +142,7 @@ ordinary code rendered as a wall of orange. The opposite failure is just
 as real and happened later: by 1.0.0 steel blue had crept over members,
 keys and CSS values until only 34% of colored scopes were warm and the
 theme no longer read as a warm theme at all. Both edges are now measured
-(check 13). Key tokens (reuse these hexes, don't invent new ones for the
+(checks 13 and 14). Key tokens (reuse these hexes, don't invent new ones for the
 same role):
 
 | Role | Hex |
@@ -147,7 +155,8 @@ same role):
 | Primary accent (orange) | `#FF7A33` |
 | Secondary accent (amber) | `#F5A623` |
 | Tertiary accent (copper) | `#C97B4A` |
-| Error (ember red) | `#E5484D` |
+| Error + error path (ember red) | `#E5484D` |
+| Operators (rose) | `#DF4E99` |
 | Numbers/constants/info (steel blue) | `#5DA7D5` |
 | Types/classes (slate teal) | `#53C1B3` |
 | Decorators/regex/escapes (violet) | `#906FD5` |
@@ -186,7 +195,7 @@ comments, punctuation, operators and function parameters indistinguishable
 |---|---|---|
 | comment | `#7C8494` | `comment`, `meta.separator` |
 | doc comment | `#8891A3` | `comment.block.documentation` |
-| punctuation | `#ABB3C0` | `punctuation`, `keyword.operator`, `storage.type.function.arrow`, semantic `operator` |
+| punctuation | `#ABB3C0` | `punctuation`, `storage.type.function.arrow` |
 | parameter | `#C9CDD6` | `variable.parameter`, semantic `parameter` |
 | text | `#E4E1DC` | everything unstyled |
 
@@ -210,12 +219,35 @@ Copper is the **member/slot** role: `variable.language` (`this`, `self`,
 `super`, `$this`) is copper **bold**, and copper regular covers object
 and struct members (`variable.other.member`, `variable.other.property`),
 unquoted object-literal keys (`meta.object-literal.key`, matching the
-semantic `property` role), shell `$VAR` and Ruby `@var`, plus the CSS
-entries below. Bold is what keeps `this` apart from `.property`. These
+semantic `property` role), **JSON keys** (`support.type.property-name`)
+and **YAML keys** (`entity.name.tag.yaml`), shell `$VAR` and Ruby `@var`,
+plus the SCSS variables below. Bold is what keeps `this` apart from `.property`. These
 moved off steel blue in 1.1.0: property access is the densest token in
 ordinary JS/TS, so parking it on a cool hue is most of what made the
 theme stop looking warm. The Pylance semantic tokens
 `selfParameter`/`clsParameter` match `variable.language`.
+
+**Rose** (`keyword.operator` plus the semantic `operator`) is the theme's
+only high-frequency, low-mass role: an operator appears on nearly every
+line of code but occupies one to three characters, so it adds a hue to
+every file without ever being able to dominate one. It moved out of the
+neutral punctuation step in 1.2.0 for exactly that reason. The word-like
+operators (`new`, `in`, `instanceof`, `sizeof`, casts, Python's `not`)
+stay italic orange — they read as keywords, not punctuation — and
+`storage.type.function.arrow` stays punctuation gray.
+
+**The error path** (`keyword.control.trycatch`, `keyword.control.exception`)
+takes the ember red already used for errors and deletions, italic like
+every other control keyword. It is deliberately narrow. A wider "control
+flow jump" role covering `return`/`break`/`continue` **is not portable**
+and must not be attempted through TextMate scopes: TypeScript splits
+`keyword.control` into `.flow`, `.loop`, `.conditional`, `.trycatch` and
+`.import`, but MagicPython folds `if`, `else`, `elif`, `for`, `break`,
+`continue`, `except` and `finally` into a single
+`keyword.control.flow.python`. Colouring that scope would give Python and
+TypeScript visibly different keyword schemes, which is the one thing the
+four-variant hue language exists to prevent. Python therefore keeps plain
+orange on `try`/`except`; that gap is intentional, not an oversight.
 
 Built-in primitive types (`storage.type.built-in` for C/C++,
 `keyword.type` for C#) are slate teal like all other types — without
@@ -249,13 +281,16 @@ orange they'd inherit from `keyword` — a unit is the warm suffix on a
 steel-blue number. SCSS/LESS variables (`variable.scss`,
 `variable.other.less`, `variable.css`) are copper as well, being
 variables rather than literals; color literals (`constant.other.color`)
-stay steel blue, being literals. Property names are copper via a
-**narrow** `support.type.property-name.css`/`.scss`/`.less` rule, and
-the generic `support.type.property-name` **must stay steel blue** — that
-same scope covers JSON keys, so moving it wholesale turns every `.json`
-file into a wall of copper, which is the exact mistake 1.1.0 set out to
-fix, only in a different hue. Fixture entries pin both halves. The
-generic `support.type` teal must never win over either.
+stay steel blue, being literals. Property names are **slate teal** via a
+narrow `support.type.property-name.css`/`.scss`/`.less` rule — they are
+names from a fixed built-in vocabulary, exactly what the teal type family
+is for, and putting them on a warm hue next to amber selectors is what
+made a `.scss` file 77% warm across only two hue families at 1.1.0. The
+generic `support.type.property-name`, which covers **JSON keys**, is
+copper instead. 1.1.0 kept those blue for fear of a copper wall; check 14
+then showed `.json` and `.yaml` had no warm token at all, so the wall was
+already there, merely cool. Fixture entries pin both halves so neither
+drifts. The generic `support.type` teal must never win over either.
 
 **Markdown** structure: list bullets
 (`punctuation.definition.list.begin`) are amber, the fence's language tag
@@ -265,9 +300,9 @@ the primary text color so block content is never left at the editor
 default.
 
 Auxiliary-format rules (same role logic): **YAML mapping keys**
-(`entity.name.tag.yaml`) are steel blue, overriding the orange
-`entity.name.tag` — a config file full of keys must not become an
-orange wall. Diff/patch content maps to the git colors
+(`entity.name.tag.yaml`) are copper, overriding the orange
+`entity.name.tag` — copper is the member/slot role and a key is a slot
+name; the orange would still be too loud for a file that is mostly keys. Diff/patch content maps to the git colors
 (`markup.inserted` green, `markup.deleted` red, `markup.changed`
 amber, `meta.diff.header` steel blue, `meta.diff.range` violet).
 Shell `$VAR` / Ruby `@var` are copper with the member/slot

@@ -36,20 +36,27 @@ code doesn't turn into a wall of orange:
 |---|---|
 | Keywords, storage, tags | orange |
 | Functions, methods, CSS selectors | amber |
-| `this`/`self`, properties and members, CSS property names, units | copper |
+| `this`/`self`, properties and members, JSON/YAML keys, units | copper |
+| Operators | rose |
+| `try` / `catch` / `throw` | ember red |
 | Strings | green |
-| Numbers, constants, JSON/YAML keys, HTML attribute names | steel blue |
-| Types, classes, HTML attribute values | slate teal |
+| Numbers, constants, colour literals, HTML attribute names | steel blue |
+| Types, classes, CSS property names, HTML attribute values | slate teal |
 | Decorators, annotations, regex, escapes, `${...}` | violet |
 | Comments | muted blue-gray, italic (Dark/Light only) |
 
 So `<div class="row">` reads orange tag → steel-blue attribute name →
-slate-teal value, `const n = 42` reads orange keyword → plain text →
-steel-blue number, and `padding: 12px` reads copper property → steel-blue
-number → copper unit.
+slate-teal value, `const n = 42` reads orange keyword → plain text → rose
+operator → steel-blue number, and `padding: 12px` reads teal property →
+steel-blue number → copper unit.
+
+No single file type is allowed to fall entirely into one temperature. Every
+language the theme targets — TypeScript, SCSS, Python, JSON, YAML, Markdown,
+HTML — lands between 12% and 65% warm, measured on a real token mix and
+enforced on every commit.
 
 Between comments and body text sits a four-step neutral ramp — doc comments,
-punctuation, operators and parameters each get their own weight, in all four
+punctuation, parameters and body text each get their own weight, in all four
 variants — so structure stays readable without pulling colour into it.
 
 ## The theme family
@@ -70,8 +77,8 @@ you use them.
 
 - Four variants sharing one hue language — Dark, Light, Dark High Contrast,
   Light High Contrast — installed together from a single extension.
-- A "hot metal" accent system (orange / amber / copper) as the visual
-  hero, balanced by cool counterpoint hues (steel blue, slate teal,
+- A "hot metal" accent system (orange / amber / copper / rose) as the
+  visual hero, balanced by cool counterpoint hues (steel blue, slate teal,
   violet, green) held a step lower in chroma so they support the heroes
   instead of competing with them.
 - Full workbench theming: activity bar, status bar, tabs, terminal
@@ -93,8 +100,9 @@ you use them.
   automatically on every commit, not just eyeballed. The same suite
   guarantees the four variants keep identical *roles*, not just identical
   keys, so no variant quietly flattens a distinction the others make — and
-  measures the warm/cool balance of the palette itself, so the theme can't
-  drift away from being a warm theme one rule at a time.
+  measures the warm/cool balance of the palette itself — both overall and
+  per file type — so neither the theme as a whole nor any single language
+  can drift into one temperature.
 
 ## Installation
 
@@ -110,7 +118,7 @@ Installing the extension gives you all four theme variants.
 **From a VSIX file:**
 
 ```
-code --install-extension konexforge-themes-1.1.0.vsix
+code --install-extension konexforge-themes-1.2.0.vsix
 ```
 
 ## Activating the theme
@@ -134,12 +142,13 @@ palette:
 | Muted text | `#7C8494` | comments, CodeLens, ghost text |
 | Primary accent (orange) | `#FF7A33` | keywords, tags, storage |
 | Secondary accent (amber) | `#F5A623` | functions, methods, macros |
-| Tertiary accent (copper) | `#C97B4A` | `this` / `self`, properties and members, CSS property names, units |
-| Info accent (steel blue) | `#5DA7D5` | numbers, constants, JSON keys, HTML attribute names |
-| Type accent (slate teal) | `#53C1B3` | types, classes, attribute values |
+| Tertiary accent (copper) | `#C97B4A` | `this` / `self`, properties and members, JSON/YAML keys, units |
+| Operator accent (rose) | `#DF4E99` | operators |
+| Info accent (steel blue) | `#5DA7D5` | numbers, constants, colour literals, HTML attribute names |
+| Type accent (slate teal) | `#53C1B3` | types, classes, CSS property names, attribute values |
 | Decorator accent (violet) | `#906FD5` | decorators, regex, escapes |
 | Success accent (green) | `#67CD7C` | strings, git added, diff inserted |
-| Error accent (ember red) | `#E5484D` | errors, git deleted |
+| Error accent (ember red) | `#E5484D` | errors, git deleted, `try`/`catch`/`throw` |
 
 The two warm accents are the loudest colors on screen on purpose: orange and
 amber carry the code's skeleton and its actions, and the four cool accents sit

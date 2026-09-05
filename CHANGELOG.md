@@ -4,6 +4,62 @@ All notable changes to the "KonexForge Themes" extension will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.0] - 2026-09-05
+
+1.1.0 fixed the palette's overall warm/cool balance but measured it only in
+aggregate. Measuring it *per file type* showed the balance had simply moved:
+an `.scss` file was 77% warm across two hue families, while `.json` and
+`.yaml` files contained no warm token at all. Individual files still read as
+one temperature, hot or cold.
+
+### Added
+
+- **Rose (`#DF4E99` on Dark) for operators** — `keyword.operator` and the
+  semantic `operator` leave the neutral punctuation step. An operator appears
+  on nearly every line but occupies one to three characters, so it adds a hue
+  to every file without being able to dominate one. The word-like operators
+  (`new`, `in`, `instanceof`, `sizeof`, casts, Python's `not`) stay italic
+  orange, and the JS/TS `=>` stays punctuation gray.
+- **Ember red on the error path** — `keyword.control.trycatch` and
+  `keyword.control.exception`, italic like every other control keyword.
+  Deliberately narrow: a wider "control-flow jump" role covering
+  `return`/`break`/`continue` is not portable, because TypeScript splits
+  `keyword.control` into `.flow`/`.loop`/`.conditional`/`.trycatch` while
+  MagicPython folds `if`, `else`, `for`, `break`, `except` and `finally` into
+  a single `keyword.control.flow.python`. Python keeps plain orange on
+  `try`/`except`; that gap is intentional and documented.
+- **Validator check 14 — per-language balance.** Resolves a hand-weighted
+  corpus of real token mixes for TypeScript, SCSS, Python, JSON, YAML,
+  Markdown and HTML, and requires each to land between 12% and 65% warm with
+  no hue family above 70%. Check 13 measures the palette as a whole and is
+  blind to a single file type collapsing. Verified to fail on the 1.1.0
+  palette for SCSS, JSON and YAML.
+
+### Changed
+
+- **CSS/SCSS property names move from copper to slate teal.** They are names
+  from a fixed built-in vocabulary — what the teal type family is for — and
+  sitting them on a warm hue beside amber selectors is what made an `.scss`
+  file 77% warm. SCSS is now 45% warm across three families.
+- **JSON and YAML keys move from steel blue to copper**, joining the
+  member/slot role that already held JS object-literal keys. This reverses a
+  1.1.0 note that warned such a move would make every `.json` file a wall of
+  copper; the measurement showed the wall already existed and was merely
+  cool. JSON goes 0% → 54% warm, YAML 0% → 42%.
+
+### Result
+
+Every targeted language now lands between 17% and 59% warm with at least
+three hue families present, against a 0–77% spread before:
+
+| | 1.1.0 | 1.2.0 |
+|---|---|---|
+| SCSS | 77% warm, 2 families | 45% warm, 3 families |
+| JSON | 0% warm, 2 families | 54% warm, 3 families |
+| YAML | 0% warm, 2 families | 42% warm, 3 families |
+| TypeScript | 60% warm, 5 families | 58% warm, 6 families |
+| Python | 47% warm, 5 families | 47% warm, 5 families |
+
 ## [1.1.0] - 2026-08-02
 
 The palette had been drifting cool for several releases without anything

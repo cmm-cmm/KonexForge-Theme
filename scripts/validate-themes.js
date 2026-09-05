@@ -41,6 +41,8 @@ const ITALIC_TOKEN_SCOPES = new Set([
   'comment.block.documentation',
   'keyword',
   'keyword.control',
+  'keyword.control.trycatch',
+  'keyword.control.exception',
   'keyword.operator.new',
   'keyword.operator.expression',
   'keyword.operator.logical.python',
@@ -73,7 +75,7 @@ const BRACKET_SEQUENCE = ['#FF7A33', '#F5A623', '#5DA7D5', '#53C1B3', '#906FD5',
 // the warm share of the syntax palette fell from 50% to 34%. Structure checks
 // cannot see that — every file agreed with every other file, they were just
 // all drifting together. These two numbers are the guard.
-const WARM_ROLES = new Set(['orange', 'amber', 'copper', 'red']);
+const WARM_ROLES = new Set(['orange', 'amber', 'copper', 'red', 'rose']);
 const MIN_WARM_SHARE = 0.4;
 // No single role may dominate: a role that swallows unrelated concepts is how
 // the drift happened in the first place.
@@ -145,17 +147,25 @@ const SCOPE_FIXTURE = [
   // near-identical oranges again.
   ['storage.type.js', 'orange'],
   ['variable.language.this.js', 'copper'],
+  // Operators carry the rose role; the word-like ones stay italic orange
+  // because they read as keywords, not punctuation.
+  ['keyword.operator.assignment.js', 'rose'],
+  ['keyword.operator.comparison.ts', 'rose'],
+  ['keyword.operator.new.js', 'orange'],
+  // Only the C-family grammars split the error path into its own scope.
+  ['keyword.control.trycatch.ts', 'red'],
   // CSS/SCSS: selectors are not the HTML annotation layer, units are not
   // keywords, and hex color values must not fall through to the default.
   ['entity.other.attribute-name.class.css', 'amber'],
   ['keyword.other.unit.px.css', 'copper'],
   ['constant.other.color.rgb-value.hex.css', 'blue'],
   ['variable.scss', 'copper'],
-  ['support.type.property-name.css', 'copper'],
-  // ...but the same scope covers JSON keys, which must stay blue. Moving
-  // `support.type.property-name` wholesale would turn every .json file into a
-  // wall of copper — the mistake 1.1.0 fixed, in a different hue.
-  ['support.type.property-name.json', 'blue'],
+  ['support.type.property-name.css', 'teal'],
+  // ...and the same scope covers JSON keys, which take copper instead. 1.1.0
+  // kept them blue to avoid a copper wall; the per-language measurement in
+  // check 14 then showed JSON and YAML had no warm token at all, so the wall
+  // was already there, just cool. Both halves are pinned so neither drifts.
+  ['support.type.property-name.json', 'copper'],
   // HTML keeps the steel-blue attribute name / teal attribute value split.
   ['entity.other.attribute-name.id.html', 'blue'],
   ['string.quoted.double.html', 'teal'],
@@ -175,7 +185,7 @@ const SCOPE_FIXTURE = [
   ['storage.modifier.lifetime.rust', 'copper'],
   ['entity.name.namespace.cs', 'violet'],
   ['entity.name.label.c', 'copper'],
-  ['entity.name.tag.yaml', 'blue'],
+  ['entity.name.tag.yaml', 'copper'],
   ['markup.inserted.diff', 'green'],
   ['markup.deleted.diff', 'red'],
   ['variable.other.normal.shell', 'copper'],
@@ -185,6 +195,128 @@ const SCOPE_FIXTURE = [
   ['entity.name.function.decorator.python', 'violet'],
   ['support.constant.dom.js', 'blue'],
 ];
+
+// --- Language balance policy ------------------------------------------------
+// Check 13 measures the palette as a whole. It cannot see that a *single file
+// type* has collapsed into one temperature, which is what actually reaches the
+// user: at 1.1.0 an .scss file was 77% warm across only two hue families while
+// .json and .yaml files contained no warm token at all. This corpus is a
+// hand-weighted sample of each language's real token mix, resolved through the
+// same lookup as check 11 and weighted by characters on screen.
+//
+// Entries are [text, scope]. Tokens that resolve to a neutral (comments,
+// punctuation, plain text) are excluded from the denominator — they are the
+// page, not the palette.
+const LANG_CORPUS = {
+  TypeScript: [
+    ['export', 'keyword.control.export'], ['class', 'storage.type'], ['ThemeLoader', 'entity.name.type.class'],
+    ['private', 'storage.modifier'], ['static', 'storage.modifier'], ['readonly', 'storage.modifier'],
+    ['MAX', 'variable.other.constant'], ['4', 'constant.numeric'],
+    ['async', 'storage.modifier.async'], ['load', 'entity.name.function'], ['id', 'variable.parameter'],
+    ['string', 'support.type.primitive'], ['Promise', 'entity.name.type'],
+    ['const', 'storage.type'], ['file', 'variable'], ['=', 'keyword.operator'],
+    ['`themes/', 'string.template'], ['${', 'punctuation.definition.template-expression'],
+    ['id', 'variable'], ['}', 'punctuation.definition.template-expression'], ['.json`', 'string.template'],
+    ['await', 'keyword.control.flow'], ['readFile', 'entity.name.function'], ['"utf8"', 'string.quoted.double'],
+    ['if', 'keyword.control.conditional'], ['!', 'keyword.operator'], ['raw', 'variable'],
+    ['try', 'keyword.control.trycatch'], ['catch', 'keyword.control.trycatch'],
+    ['return', 'keyword.control.flow'], ['null', 'constant.language'],
+    ['this', 'variable.language'], ['.cache', 'variable.other.property'], ['.set', 'entity.name.function'],
+    ['JSON', 'support.class'], ['.parse', 'entity.name.function'], ['??', 'keyword.operator'],
+    ['// resolve against the folder', 'comment.line.double-slash'],
+  ],
+  SCSS: [
+    ['/* forge card */', 'comment.block'],
+    ['.forge-card', 'entity.other.attribute-name.class.css'], [':hover', 'entity.other.attribute-name.pseudo-class.css'],
+    ['color', 'support.type.property-name.css'], ['#ff7a33', 'constant.other.color.rgb-value.hex.css'],
+    ['padding', 'support.type.property-name.css'], ['12', 'constant.numeric'], ['px', 'keyword.other.unit.px.css'],
+    ['16', 'constant.numeric'], ['px', 'keyword.other.unit.px.css'],
+    ['border', 'support.type.property-name.css'], ['1', 'constant.numeric'], ['px', 'keyword.other.unit.px.css'],
+    ['solid', 'support.constant'], ['#26c5b5', 'constant.other.color.rgb-value.hex.css'],
+    ['#sidebar', 'entity.other.attribute-name.id.css'], ['.item', 'entity.other.attribute-name.class.css'],
+    ['$gap', 'variable.scss'], ['8', 'constant.numeric'], ['px', 'keyword.other.unit.px.css'],
+    ['font-weight', 'support.type.property-name.css'], ['600', 'constant.numeric'],
+    ['@media', 'keyword.control.at-rule'], ['min-width', 'support.type.property-name.css'],
+    ['48', 'constant.numeric'], ['rem', 'keyword.other.unit.px.css'],
+    ['gap', 'support.type.property-name.css'], ['var', 'support.function'], ['--gap', 'variable.css'],
+  ],
+  Python: [
+    ['# load the palette', 'comment.line.number-sign'],
+    ['from', 'keyword.control.flow.python'], ['pathlib', 'entity.name.namespace'],
+    ['import', 'keyword.control.import.python'], ['Path', 'entity.name.type.class'],
+    ['@dataclass', 'entity.name.function.decorator'],
+    ['class', 'storage.type.class.python'], ['Palette', 'entity.name.type.class.python'],
+    ['name', 'variable.parameter'], ['str', 'support.type.primitive'],
+    ['def', 'storage.type.function.python'], ['load', 'entity.name.function.python'],
+    ['self', 'variable.language'], ['path', 'variable.parameter'],
+    ['"""Read one variant."""', 'comment.block.documentation'],
+    ['if', 'keyword.control.flow.python'], ['not', 'keyword.operator.logical.python'],
+    ['path', 'variable'], ['.exists', 'entity.name.function'],
+    ['raise', 'keyword.control.flow.python'], ['FileNotFoundError', 'support.class'],
+    ['f"missing ', 'string.quoted.double'], ['{', 'constant.character.format.placeholder'],
+    ['path', 'variable'], ['}', 'constant.character.format.placeholder'], ['"', 'string.quoted.double'],
+    ['return', 'keyword.control.flow.python'], ['self', 'variable.language'], ['.cache', 'variable.other.property'],
+    ['==', 'keyword.operator'], ['True', 'constant.language'], ['42', 'constant.numeric'],
+  ],
+  JSON: [
+    ['"name"', 'support.type.property-name.json'], ['"konexforge-themes"', 'string.quoted.double.json'],
+    ['"version"', 'support.type.property-name.json'], ['"1.2.0"', 'string.quoted.double.json'],
+    ['"engines"', 'support.type.property-name.json'],
+    ['"vscode"', 'support.type.property-name.json'], ['"^1.85.0"', 'string.quoted.double.json'],
+    ['"categories"', 'support.type.property-name.json'], ['"Themes"', 'string.quoted.double.json'],
+    ['"contributes"', 'support.type.property-name.json'], ['"themes"', 'support.type.property-name.json'],
+    ['"label"', 'support.type.property-name.json'], ['"KonexForge Dark"', 'string.quoted.double.json'],
+    ['"uiTheme"', 'support.type.property-name.json'], ['"vs-dark"', 'string.quoted.double.json'],
+    ['"strict"', 'support.type.property-name.json'], ['true', 'constant.language.json'],
+    ['"port"', 'support.type.property-name.json'], ['8080', 'constant.numeric.json'],
+  ],
+  YAML: [
+    ['# CI', 'comment.line.number-sign'],
+    ['name', 'entity.name.tag.yaml'], ['Validate themes', 'string.unquoted.yaml'],
+    ['on', 'entity.name.tag.yaml'], ['push', 'entity.name.tag.yaml'],
+    ['jobs', 'entity.name.tag.yaml'], ['validate', 'entity.name.tag.yaml'],
+    ['runs-on', 'entity.name.tag.yaml'], ['ubuntu-latest', 'string.unquoted.yaml'],
+    ['steps', 'entity.name.tag.yaml'], ['uses', 'entity.name.tag.yaml'],
+    ['actions/checkout@v4', 'string.unquoted.yaml'],
+    ['with', 'entity.name.tag.yaml'], ['node-version', 'entity.name.tag.yaml'], ['lts/*', 'string.unquoted.yaml'],
+    ['run', 'entity.name.tag.yaml'], ['node scripts/validate-themes.js', 'string.unquoted.yaml'],
+    ['timeout', 'entity.name.tag.yaml'], ['15', 'constant.numeric.yaml'], ['true', 'constant.language.yaml'],
+  ],
+  Markdown: [
+    ['## Commands', 'markup.heading'],
+    ['Run the validator with ', 'meta.paragraph.markdown'],
+    ['`node scripts/validate.js`', 'markup.inline.raw'],
+    ['-', 'punctuation.definition.list.begin.markdown'], ['first item', 'markup.list.unnumbered.markdown'],
+    ['-', 'punctuation.definition.list.begin.markdown'], ['second item', 'markup.list.unnumbered.markdown'],
+    ['**bold claim**', 'markup.bold'], ['*emphasis*', 'markup.italic'],
+    ['[the docs](./CLAUDE.md)', 'markup.underline.link'],
+    ['bash', 'fenced_code.block.language.markdown'],
+    ['npx vsce package', 'markup.fenced_code.block.markdown'],
+    ['---', 'meta.separator.markdown'], ['> a quoted line', 'markup.quote'],
+  ],
+  HTML: [
+    ['<!-- nav -->', 'comment.block.html'],
+    ['div', 'entity.name.tag'], ['class', 'entity.other.attribute-name'], ['"row gap-2"', 'string.quoted.double.html'],
+    ['a', 'entity.name.tag'], ['href', 'entity.other.attribute-name'], ['"/docs"', 'string.quoted.double.html'],
+    ['data-id', 'entity.other.attribute-name'], ['"42"', 'string.quoted.double.html'],
+    ['button', 'entity.name.tag'], ['disabled', 'entity.other.attribute-name'],
+    ['{{', 'punctuation.definition.template-expression'], ['__', 'entity.name.function'],
+    ["'nav.home'", 'string.quoted.single'], ['}}', 'punctuation.definition.template-expression'],
+  ],
+};
+
+// Warm share allowed per language. The floor is low enough to keep markup
+// deliberately cool (HTML leans blue/teal so embedded code stands out) but
+// still catches a file type with no warm token at all.
+const LANG_WARM_BAND = [0.12, 0.65];
+// No hue family may own a file type outright.
+const MAX_FAMILY_SHARE = 0.7;
+// Roles collapse into families here: the five warm roles read as one
+// temperature, each cool role stands on its own.
+const ROLE_FAMILY = {
+  orange: 'warm', amber: 'warm', copper: 'warm', red: 'warm', rose: 'warm',
+  blue: 'blue', teal: 'teal', violet: 'violet', green: 'green',
+};
 
 const errors = [];
 function fail(msg) {
@@ -249,6 +381,7 @@ function roleAnchors(theme) {
     green: c['editorGutter.addedBackground'],
     red: c['editorError.foreground'],
     text: c['editor.foreground'],
+    rose: exact('keyword.operator'),
     comment: exact('comment'),
     punct: exact('punctuation'),
   };
@@ -617,6 +750,51 @@ for (const [name, theme] of Object.entries(themes)) {
         `${name}: the ${role} role covers ${n}/${colored} scopes ` +
           `(${(n / colored * 100).toFixed(1)}%), above ${MAX_ROLE_SHARE * 100}% — it is absorbing unrelated concepts`
       );
+    }
+  }
+}
+
+
+// --- 14. Per-language balance -----------------------------------------------
+// See LANG_CORPUS above for why this is separate from check 13.
+
+for (const [name, theme] of Object.entries(themes)) {
+  const R = roleAnchors(theme);
+  const familyOf = {};
+  for (const [role, family] of Object.entries(ROLE_FAMILY)) {
+    if (isOpaqueHex(R[role])) familyOf[R[role].toUpperCase()] = family;
+  }
+
+  for (const [lang, tokens] of Object.entries(LANG_CORPUS)) {
+    const share = {};
+    let coloured = 0;
+    for (const [text, scope] of tokens) {
+      const hex = resolveScope(theme, scope);
+      const family = hex && familyOf[hex.toUpperCase()];
+      if (!family) continue; // neutral, or a role outside the accent set
+      const n = text.replace(/\s/g, '').length;
+      share[family] = (share[family] || 0) + n;
+      coloured += n;
+    }
+    if (!coloured) {
+      fail(`${name}: the ${lang} sample resolves to no accent colour at all`);
+      continue;
+    }
+    const warm = (share.warm || 0) / coloured;
+    const [lo, hi] = LANG_WARM_BAND;
+    if (warm < lo || warm > hi) {
+      fail(
+        `${name}: ${lang} is ${(warm * 100).toFixed(0)}% warm, outside ` +
+          `${lo * 100}-${hi * 100}% — that file type reads as one temperature`
+      );
+    }
+    for (const [family, n] of Object.entries(share)) {
+      if (n / coloured > MAX_FAMILY_SHARE) {
+        fail(
+          `${name}: ${family} covers ${(n / coloured * 100).toFixed(0)}% of the ${lang} sample, ` +
+            `above ${MAX_FAMILY_SHARE * 100}% — the file type has collapsed into one hue family`
+        );
+      }
     }
   }
 }
